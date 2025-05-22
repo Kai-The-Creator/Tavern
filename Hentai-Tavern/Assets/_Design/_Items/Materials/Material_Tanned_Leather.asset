@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a28e4f28744c1ca33d23a82241ec64, type: 3}
+  m_Name: Material_Tanned_Leather
+  m_EditorClassIdentifier: 
+  _id: materialTannedLeather
+  _displayName: Tanned Leather
+  _description: Some description for item in Inventory. Test tolltip functionallity.
+  _icon: {fileID: 21300000, guid: cf5e53af085b14e068649ab056e7f32a, type: 3}
+  _baseRarity: 0
+  _categories:
+  - {fileID: 11400000, guid: 3311119411fdc454d84e29e355745f1d, type: 2}
+  startUnlocked: 1
+  _showWhenLocked: 1
+  startQuantity: 15
+  _sellPrice: 1

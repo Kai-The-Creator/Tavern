@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3559e3eee9748bebfcf4b88d1223ddc, type: 3}
+  m_Name: EnchantmentGameConfig
+  m_EditorClassIdentifier: 
+  minSequenceLength: 2
+  maxSequenceLength: 4
+  maxConsecutiveRepeat: 2
+  roundsToWin: 3
+  runeShowTime: 0.6
+  runePauseTime: 0.3
+  inputTimeout: 5
+  infiniteLives: 0
+  totalLives: 3
+  duplicateGold: 50
+  RunePool:
+  - {fileID: 11400000, guid: 4c8f4640bb928ed418f4f30c37921df4, type: 2}
+  - {fileID: 11400000, guid: c58582fec7b00dd4ba7621ea9154c020, type: 2}
+  - {fileID: 11400000, guid: 9051a27074769ec4db006a96fc928337, type: 2}
+  - {fileID: 11400000, guid: c322154eaf5214f44b4d4e5135d20198, type: 2}
+  - {fileID: 11400000, guid: 88697bb1f3a36c4449deaa3e53065675, type: 2}
+  - {fileID: 11400000, guid: 81ecef40d47d1614790a6dbc18b90f3a, type: 2}

@@ -1,0 +1,9 @@
+public enum GalleryCards
+{
+    None,
+    Naomy_R1_1,
+    Samantha_R1_1,
+    Misha_R1_1,
+    Alicia_R1_1,
+    Arlecchino_R1_1,
+}

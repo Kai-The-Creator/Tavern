@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0eb9d29bd00444cb8575f13b3589efe, type: 3}
+  m_Name: Armor_Base
+  m_EditorClassIdentifier: 
+  _id: armorBaseArmor
+  _displayName: Base Armor
+  _description: Some description for item in Inventory. Test tolltip functionallity.
+  _icon: {fileID: 21300000, guid: c23bb5c1541e4415bb82f430a308f7e3, type: 3}
+  _baseRarity: 0
+  _categories:
+  - {fileID: 11400000, guid: 8141c2192971b00458ffa9ec81cd6738, type: 2}
+  startUnlocked: 1
+  _showWhenLocked: 1
+  startQuantity: 1
+  _tiers:
+  - Meta:
+      Rarity: 0
+      FrameColor: {r: 1, g: 1, b: 1, a: 1}
+      Icon: {fileID: 21300000, guid: bb4bd32c0ce7642e2a8e843287a98bec, type: 3}
+      StartUnlocked: 1
+      Price: 15
+    Stats:
+      Defense: 15
+      Resistance: 15
+  - Meta:
+      Rarity: 1
+      FrameColor: {r: 0.6313726, g: 1, b: 0.60784316, a: 1}
+      Icon: {fileID: 21300000, guid: fdbd97405f8c2423c9c5316298af0ed9, type: 3}
+      StartUnlocked: 1
+      Price: 15
+    Stats:
+      Defense: 15
+      Resistance: 15
+  - Meta:
+      Rarity: 2
+      FrameColor: {r: 0.60784316, g: 0.85728604, b: 1, a: 1}
+      Icon: {fileID: 21300000, guid: 202faf4976ade4425a7eea84987f7282, type: 3}
+      StartUnlocked: 1
+      Price: 15
+    Stats:
+      Defense: 15
+      Resistance: 15
+  - Meta:
+      Rarity: 3
+      FrameColor: {r: 0.8485193, g: 0.60784316, b: 1, a: 1}
+      Icon: {fileID: 21300000, guid: 8f40f3453a6fc49e0ad4f2b51edd3c08, type: 3}
+      StartUnlocked: 1
+      Price: 15
+    Stats:
+      Defense: 15
+      Resistance: 15
+  - Meta:
+      Rarity: 4
+      FrameColor: {r: 1, g: 0.9079864, b: 0.60784316, a: 1}
+      Icon: {fileID: 21300000, guid: 21c97798466e54f3e8dea9e0292ecdd6, type: 3}
+      StartUnlocked: 1
+      Price: 15
+    Stats:
+      Defense: 15
+      Resistance: 15

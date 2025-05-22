@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc7e526586517194e9acc2f2e7f02693, type: 3}
+  m_Name: New Armor Equip Config
+  m_EditorClassIdentifier: 
+  itemId: baseArmor
+  displayName: Base Armor
+  icon: {fileID: 21300000, guid: c23bb5c1541e4415bb82f430a308f7e3, type: 3}
+  rarity: 0
+  buyPrice: 0
+  sellPrice: 0
+  categories:
+  - {fileID: 11400000, guid: 79ee7f054bb16614d8c34a57b95bc392, type: 2}
+  - {fileID: 11400000, guid: febb6b22fdebf5a428b8c7b8747e9159, type: 2}
+  - {fileID: 11400000, guid: 5093bcd51a67f654f8b077f5544b7d6c, type: 2}
+  startUnlocked: 1
+  defensePoints: 15
+  weightPenalty: 0

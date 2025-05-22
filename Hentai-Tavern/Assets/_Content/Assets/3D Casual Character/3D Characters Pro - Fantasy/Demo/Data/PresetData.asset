@@ -1,0 +1,375 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bc76dd3cac45448db6b275e65b319b, type: 3}
+  m_Name: PresetData
+  m_EditorClassIdentifier: 
+  presetItems:
+  - index: 0
+    parts:
+    - partType: 1
+      value: -1
+    - partType: 2
+      value: 146
+    - partType: 3
+      value: 89
+    - partType: 4
+      value: 48
+    - partType: 5
+      value: 80
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: 6
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: 2
+    - partType: 10
+      value: -1
+    - partType: 11
+      value: 24
+    - partType: 12
+      value: 34
+    - partType: 13
+      value: 21
+    - partType: 14
+      value: -1
+    - partType: 15
+      value: 1
+    - partType: 16
+      value: 93
+    - partType: 17
+      value: 90
+  - index: 1
+    parts:
+    - partType: 1
+      value: 1
+    - partType: 2
+      value: 9
+    - partType: 3
+      value: 3
+    - partType: 4
+      value: 1
+    - partType: 5
+      value: 70
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: 6
+    - partType: 10
+      value: -1
+    - partType: 11
+      value: 42
+    - partType: 12
+      value: 50
+    - partType: 13
+      value: 43
+    - partType: 14
+      value: 14
+    - partType: 15
+      value: -1
+    - partType: 16
+      value: -1
+    - partType: 17
+      value: -1
+  - index: 2
+    parts:
+    - partType: 1
+      value: 2
+    - partType: 2
+      value: -1
+    - partType: 3
+      value: 61
+    - partType: 4
+      value: 0
+    - partType: 5
+      value: 1
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: -1
+    - partType: 10
+      value: 5
+    - partType: 11
+      value: 8
+    - partType: 12
+      value: 10
+    - partType: 13
+      value: 12
+    - partType: 14
+      value: 9
+    - partType: 15
+      value: -1
+    - partType: 16
+      value: 45
+    - partType: 17
+      value: -1
+  - index: 4
+    parts:
+    - partType: 1
+      value: -1
+    - partType: 2
+      value: 34
+    - partType: 3
+      value: 19
+    - partType: 4
+      value: 25
+    - partType: 5
+      value: 39
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: 0
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: -1
+    - partType: 10
+      value: -1
+    - partType: 11
+      value: 31
+    - partType: 12
+      value: 11
+    - partType: 13
+      value: 49
+    - partType: 14
+      value: 16
+    - partType: 15
+      value: 2
+    - partType: 16
+      value: 39
+    - partType: 17
+      value: 19
+  - index: 5
+    parts:
+    - partType: 1
+      value: 23
+    - partType: 2
+      value: 99
+    - partType: 3
+      value: 53
+    - partType: 4
+      value: 49
+    - partType: 5
+      value: 70
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: 3
+    - partType: 10
+      value: -1
+    - partType: 11
+      value: 39
+    - partType: 12
+      value: 64
+    - partType: 13
+      value: 40
+    - partType: 14
+      value: -1
+    - partType: 15
+      value: -1
+    - partType: 16
+      value: 84
+    - partType: 17
+      value: 75
+  - index: 3
+    parts:
+    - partType: 1
+      value: -1
+    - partType: 2
+      value: 65
+    - partType: 3
+      value: 49
+    - partType: 4
+      value: 2
+    - partType: 5
+      value: 22
+    - partType: 6
+      value: 61
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: 9
+    - partType: 10
+      value: 3
+    - partType: 11
+      value: 13
+    - partType: 12
+      value: 17
+    - partType: 13
+      value: 53
+    - partType: 14
+      value: 32
+    - partType: 15
+      value: 0
+    - partType: 16
+      value: 51
+    - partType: 17
+      value: -1
+  - index: 6
+    parts:
+    - partType: 1
+      value: 15
+    - partType: 2
+      value: 22
+    - partType: 3
+      value: 17
+    - partType: 4
+      value: 25
+    - partType: 5
+      value: 1
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: -1
+    - partType: 10
+      value: 5
+    - partType: 11
+      value: 36
+    - partType: 12
+      value: 38
+    - partType: 13
+      value: 38
+    - partType: 14
+      value: -1
+    - partType: 15
+      value: 2
+    - partType: 16
+      value: 79
+    - partType: 17
+      value: 93
+  - index: 7
+    parts:
+    - partType: 1
+      value: -1
+    - partType: 2
+      value: 11
+    - partType: 3
+      value: 13
+    - partType: 4
+      value: 26
+    - partType: 5
+      value: 20
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: -1
+    - partType: 10
+      value: -1
+    - partType: 11
+      value: 2
+    - partType: 12
+      value: 5
+    - partType: 13
+      value: 54
+    - partType: 14
+      value: -1
+    - partType: 15
+      value: 2
+    - partType: 16
+      value: 4
+    - partType: 17
+      value: 28
+  - index: 8
+    parts:
+    - partType: 1
+      value: -1
+    - partType: 2
+      value: 19
+    - partType: 3
+      value: 5
+    - partType: 4
+      value: 8
+    - partType: 5
+      value: 10
+    - partType: 6
+      value: 11
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: -1
+    - partType: 10
+      value: 1
+    - partType: 11
+      value: 9
+    - partType: 12
+      value: 58
+    - partType: 13
+      value: 43
+    - partType: 14
+      value: -1
+    - partType: 15
+      value: -1
+    - partType: 16
+      value: 51
+    - partType: 17
+      value: 51
+  - index: 9
+    parts:
+    - partType: 1
+      value: -1
+    - partType: 2
+      value: 35
+    - partType: 3
+      value: 25
+    - partType: 4
+      value: 41
+    - partType: 5
+      value: 5
+    - partType: 6
+      value: -1
+    - partType: 7
+      value: -1
+    - partType: 8
+      value: -1
+    - partType: 9
+      value: 11
+    - partType: 10
+      value: 5
+    - partType: 11
+      value: 30
+    - partType: 12
+      value: 18
+    - partType: 13
+      value: 10
+    - partType: 14
+      value: 29
+    - partType: 15
+      value: 2
+    - partType: 16
+      value: 70
+    - partType: 17
+      value: 37

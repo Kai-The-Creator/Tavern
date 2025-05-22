@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f82c315056ebe0a4a8a2f12140b5bd80, type: 3}
+  m_Name: InventoryWindow
+  m_EditorClassIdentifier: 
+  windowType: 2
+  prefab: {fileID: 6585918849232881183, guid: 4c15424b1f5cd554f8c2c26179865bc4, type: 3}
+  defaultLayer: 1
+  isDraggable: 0
+  showOnInit: 1

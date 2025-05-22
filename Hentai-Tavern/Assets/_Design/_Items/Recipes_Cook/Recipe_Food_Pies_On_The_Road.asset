@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f266b1465c447c4acdfbd9d0af0720f, type: 3}
+  m_Name: Recipe_Food_Pies_On_The_Road
+  m_EditorClassIdentifier: 
+  _id: recipeFoodPiesOnTheRoad
+  _displayName: Pies On The Road
+  _description: Some description for item in Inventory. Test tolltip functionallity.
+  _icon: {fileID: 21300000, guid: de6aaf1dbe6ae2b4d97345bdeeb914b4, type: 3}
+  _baseRarity: 0
+  _categories:
+  - {fileID: 11400000, guid: 9ba4f2aa3df85e44abc3193776934f56, type: 2}
+  startUnlocked: 1
+  _showWhenLocked: 1
+  startQuantity: 1
+  _workstations:
+  - {fileID: 11400000, guid: ccb257b4dfde4c94883ccc9162bca906, type: 2}
+  _dish: {fileID: 2672955023955117803, guid: 30523e8e3a133fa4da89d1420ad6c997, type: 3}
+  _ingredients:
+  - Ingredient: {fileID: 11400000, guid: 126060cded6f3be43970f5b50973dbb7, type: 2}
+    Quantity: 1
+  _chopClicks: 5

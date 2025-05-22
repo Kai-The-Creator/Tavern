@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6389d051f86b34344838cbd07a47ca94, type: 3}
+  m_Name: ProjectSOInstaller
+  m_EditorClassIdentifier: 
+  languageConfig: {fileID: 11400000, guid: 91e0da5f92afd5540a58a748cd90f735, type: 2}
+  charactersList: {fileID: 11400000, guid: c4ccb716e3200ca41bf6c9855b3c433d, type: 2}
+  locationsList: {fileID: 11400000, guid: d17e7f94faeb35148be9755de4f8ea3f, type: 2}
+  questsListConfig: {fileID: 11400000, guid: 75fa13dbb12e2b042a55be97a08bccbd, type: 2}
+  timeScaleConfig: {fileID: 11400000, guid: 607f930038e45134e93996f119058169, type: 2}
+  quizeListConfig: {fileID: 11400000, guid: b5ada16f1e1c3f84f9a5aea1471b877c, type: 2}
+  localizationUIConfig: {fileID: 11400000, guid: 8065aea13f8cca343a13bbd8ec3c0b8c, type: 2}
+  AdultScenesList: {fileID: 11400000, guid: 89c5db3198ab8ec4ebc35cade732ae86, type: 2}
+  settings: {fileID: 11400000, guid: 0c6212dfd3c834d4da07c26218a72653, type: 2}
+  quests2048: {fileID: 11400000, guid: dd7e7663a86cca143a5c07bae45b3341, type: 2}
+  meshSO: {fileID: 11400000, guid: d3ebb4f68bbe75a40bfd513ccfd4b60b, type: 2}
+  battle: {fileID: 11400000, guid: 893de140d50605142958853d227f4508, type: 2}
+  wheekdayConfig: {fileID: 11400000, guid: 565d1a80aaf483c44bb1cd4869d03b35, type: 2}
+  galleryList: {fileID: 11400000, guid: a997068f60243a14cade8554b4c348b9, type: 2}
+  AdultGalleryList: {fileID: 11400000, guid: 3bd01c3c36ca7c54abb0f7cac7623612, type: 2}
+  SkipEventsList: {fileID: 11400000, guid: 63a7aa3412113ad42ad8732e345555d7, type: 2}
+  bookList: {fileID: 11400000, guid: a99e9dbff329d2d49a82f3ad3eeaace4, type: 2}
+  puzzles: {fileID: 11400000, guid: 782711ec4054d9c498d58807e40e1891, type: 2}
+  roomList: {fileID: 11400000, guid: ae6432c8177518d48a5cd1d352d3c7fe, type: 2}
+  titresEvent: {fileID: 11400000, guid: e8d9c5dabf2cca34bbcc432c676891a0, type: 2}

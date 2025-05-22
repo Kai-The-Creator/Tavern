@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bb7d8ff3efc4d9da992041ce4308ea8, type: 3}
+  m_Name: Recipe_Craft_Crossbow
+  m_EditorClassIdentifier: 
+  _id: recipeCraftCrossbow
+  _displayName: Crossbow
+  _description: Some description for item in Inventory. Test tolltip functionallity.
+  _icon: {fileID: 21300000, guid: a222a9e7d571b458092a70ec97a64a03, type: 3}
+  _baseRarity: 0
+  _categories:
+  - {fileID: 11400000, guid: 9ba4f2aa3df85e44abc3193776934f56, type: 2}
+  startUnlocked: 1
+  _showWhenLocked: 1
+  startQuantity: 1
+  _workstations:
+  - {fileID: 11400000, guid: 44bc8c24dc359334b826232d254362c0, type: 2}
+  _resultItem: {fileID: 11400000, guid: 7800c2575214b6f43840468fc3ee4b4c, type: 2}
+  _materials:
+  - Resource: {fileID: 11400000, guid: b79c363b2300c1747959e984c97ab81c, type: 2}
+    Count: 1
+  _productPrefab: {fileID: 9221870321695350575, guid: 1ebf3fa5758024c429ccf64100329c07, type: 3}
