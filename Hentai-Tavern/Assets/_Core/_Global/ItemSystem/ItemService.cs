@@ -182,7 +182,13 @@ namespace _Core._Global.ItemSystem
         }
         
         public IReadOnlyList<TItem> GetUnlockedItems<TItem>() where TItem : ItemConfig
-            => _items.OfType<TItem>().ToList().AsReadOnly();
+        {
+            return _items.Values
+                .Where(s => s.Unlocked && s.Config is TItem)
+                .Select(s => (TItem)s.Config)
+                .ToList()
+                .AsReadOnly();
+        }
 
         // ────────────────────────── save / load (v2 – без уровней)
         private async UniTask LoadAsync()

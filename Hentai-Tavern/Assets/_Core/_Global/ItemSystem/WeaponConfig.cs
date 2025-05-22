@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Core._Combat;
 using _Core._Global.Equip;
 using _Core._Global.ItemSystem;
 using _Core._Global.UI.Tooltips;
@@ -9,13 +10,17 @@ using UnityEngine;
 namespace _Core._Global.ItemSystem
 {
     [CreateAssetMenu(menuName = "GAME/Items/Weapon", fileName = "Weapon_")]
-    public sealed class WeaponConfig : ItemConfig, ITieredItemConfig, IStatProvider, IWearable
+    public sealed class WeaponConfig : ItemConfig, ITieredItemConfig, IStatProvider, IWearable, IAbilityProvider
     {
         [SerializeField] private EquipGroup[] _groups = { EquipGroup.Weapon };
         public IReadOnlyList<EquipGroup> AllowedGroups => _groups;
 
         [SerializeField] private List<Tier<WeaponTierStats>> _tiers;
 
+        [Header("Abilities")]
+        [SerializeField] private List<_Core._Combat.AbilitySO> _activeAbilities = new();
+        [SerializeField] private List<_Core._Combat.PassiveAbilitySO> _passiveAbilities = new();
+        
         // ------------- ITieredItemConfig -------------
         IReadOnlyList<TierMeta> ITieredItemConfig.Metas => _tiers.Select(t => t.Meta).ToList();
         public bool HasTier(Rarity r) => _tiers.Any(t => t.Meta.Rarity == r);
@@ -39,5 +44,7 @@ namespace _Core._Global.ItemSystem
             };
         }
 
+        public IReadOnlyList<_Core._Combat.AbilitySO> ActiveAbilities => _activeAbilities;
+        public IReadOnlyList<_Core._Combat.PassiveAbilitySO> PassiveAbilities => _passiveAbilities;
     }
 }
