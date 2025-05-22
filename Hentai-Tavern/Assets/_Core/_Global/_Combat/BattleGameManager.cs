@@ -1,66 +1,100 @@
-﻿using System.Threading;
-using _Core._Combat;
-using _Core._Combat.Services;
-using _Core._Global.CameraService;
-using _Core._Global.Services;
+﻿using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using _Core._Combat;
+using _Core._Combat.Services;
+using _Core._Global.Services;
+using _Core.GameEvents;
 
 namespace _Core.GameEvents.Battle
 {
-    public class BattleGameManager : MonoBehaviour, IMiniGameManager
+    public sealed class BattleGameManager : MonoBehaviour, IMiniGameManager
     {
-        [SerializeField] private BattleConfig config;
-        [SerializeField] private Transform cameraPivot;
+        [Header("Config")] [SerializeField]
+        private BattleConfig config;
 
+        [Header("Prefabs")]
+        [SerializeField] private CombatEntity playerPrefab;
+        [SerializeField] private List<CombatEntity> enemyPrefabs = new();
+
+        [Header("Spawn points")]
+        [SerializeField] private Transform playerSpawn;
+        [SerializeField] private List<Transform> enemySpawns = new();
+
+        private readonly List<CombatEntity> spawned = new();
         private CombatService combat;
-        private ICameraService cams;
-        private BattleArena arena;
-        private GameObject arenaInstance;
-        private CancellationTokenSource cts;
+        private CancellationTokenSource battleCts;
 
         public bool IsGameActive { get; private set; }
         public bool IsPaused { get; private set; }
 
         private void Awake()
         {
-            combat = GetComponentInChildren<CombatService>(true);
-            cams = GService.GetService<ICameraService>();
+            combat = GService.GetService<CombatService>();
         }
 
         public async UniTask StartGame()
         {
             if (IsGameActive) return;
             IsGameActive = true;
-            cts = new CancellationTokenSource();
+            IsPaused = false;
 
-            if (config.ArenaPrefab && arenaInstance == null)
-            {
-                arenaInstance = Instantiate(config.ArenaPrefab, transform);
-                arena = arenaInstance.GetComponent<BattleArena>() ?? arenaInstance.AddComponent<BattleArena>();
-            }
+            battleCts = new CancellationTokenSource();
 
-            if (cameraPivot)
-                await cams.MoveCamera(cameraPivot, 1f, cts.Token, "BATTLE_CAM");
+            SpawnCombatants();
+            combat.Configure(config, spawned);
 
-            if (combat)
-                await combat.StartBattle(config, arena);
+            await combat.StartBattle(battleCts.Token);
+
+            ClearCombatants();
+            IsGameActive = false;
+        }
+
+        public UniTask PauseGame()
+        {
+            IsPaused = true;
+            return UniTask.CompletedTask;
+        }
+
+        public UniTask ResumeGame()
+        {
+            IsPaused = false;
+            return UniTask.CompletedTask;
         }
 
         public async UniTask StopGame()
         {
             if (!IsGameActive) return;
-            cts.Cancel();
-            combat?.EndBattle();
-            if (arenaInstance) Destroy(arenaInstance);
-            arenaInstance = null;
-            arena = null;
-            await cams.MoveCameraToStartPosition();
+
+            battleCts.Cancel();
+            ClearCombatants();
             IsGameActive = false;
+            await UniTask.Yield();
         }
 
-        public UniTask PauseGame()  { IsPaused = true; return UniTask.CompletedTask; }
-        public UniTask ResumeGame() { IsPaused = false; return UniTask.CompletedTask; }
-        public async UniTask RestartGame() { await StopGame(); await StartGame(); }
+        public UniTask RestartGame() => StopGame().ContinueWith(StartGame);
+
+        private void SpawnCombatants()
+        {
+            ClearCombatants();
+            if (playerPrefab && playerSpawn)
+                spawned.Add(Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation));
+
+            for (int i = 0; i < enemyPrefabs.Count && i < enemySpawns.Count; i++)
+            {
+                var prefab = enemyPrefabs[i];
+                var spawn = enemySpawns[i];
+                if (prefab && spawn)
+                    spawned.Add(Instantiate(prefab, spawn.position, spawn.rotation));
+            }
+        }
+
+        private void ClearCombatants()
+        {
+            foreach (var e in spawned)
+                if (e) Destroy(e.gameObject);
+            spawned.Clear();
+        }
     }
 }
