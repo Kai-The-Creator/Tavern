@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using _Core._Global.Services;
 using _Core._Combat;
 using _Core._Global.CameraService;
 using _Core._Global.Equip;
+using _Core._Combat.UI;
 using UnityEngine;
 
 namespace _Core._Combat.Services
@@ -33,7 +34,6 @@ namespace _Core._Combat.Services
         [SerializeField] private BattleConfig config;
         [SerializeField] private List<CombatEntity> combatants;
 
-        private int _current;
         private BattleState _state;
         public BattleState State => _state;
 
@@ -57,22 +57,47 @@ namespace _Core._Combat.Services
         {
             if (combatants == null || combatants.Count == 0)
                 return;
-
-            _current = 0;
             _state = DetermineBattleState();
 
-            while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
+            var hud = Object.FindObjectOfType<BattleHUD>();
+            bool endTurn = false;
+            void EndTurnHandler() => endTurn = true;
+            if (hud) hud.OnEndTurn += EndTurnHandler;
+
+            try
             {
-                var entity = combatants[_current];
-
-                AbilitySO ability;
-                do
+                while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
                 {
-                    ability = await RunTurn(entity);
-                } while (ability is PotionAbilitySO);
+                    // player phase
+                    var player = combatants.FirstOrDefault(c => c.IsPlayer);
+                    if (player == null)
+                        break;
 
-                _state = DetermineBattleState();
-                _current = (_current + 1) % combatants.Count;
+                    endTurn = false;
+                    while (!endTurn && _state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
+                    {
+                        await RunTurn(player);
+                        _state = DetermineBattleState();
+                        if (_state == BattleState.Victory || _state == BattleState.Defeat)
+                            break;
+                    }
+
+                    if (_state == BattleState.Victory || _state == BattleState.Defeat || token.IsCancellationRequested)
+                        break;
+
+                    // enemy phase
+                    foreach (var enemy in combatants.Where(c => !c.IsPlayer && c.IsAlive))
+                    {
+                        await RunTurn(enemy);
+                        _state = DetermineBattleState();
+                        if (_state == BattleState.Victory || _state == BattleState.Defeat || token.IsCancellationRequested)
+                            break;
+                    }
+                }
+            }
+            finally
+            {
+                if (hud) hud.OnEndTurn -= EndTurnHandler;
             }
         }
 

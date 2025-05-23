@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using _Core._Combat.Services;
-using _Core._Combat; 
 using _Core._Global.Services;
 
 namespace _Core._Combat.UI
@@ -31,6 +23,9 @@ namespace _Core._Combat.UI
         [SerializeField] private Button ultimateButton;
         [SerializeField] private Slider ultimateSlider;
 
+        [Header("Turn")]
+        [SerializeField] private Button endTurnButton;
+
         [Header("Status")]
         [SerializeField] private StatusIndicator playerStatusIndicator;
 
@@ -42,24 +37,21 @@ namespace _Core._Combat.UI
         public AbilitySelectionPanel AbilityPanel => abilityPanel;
 
         private PlayerEntity _player;
-        private PotionController _potionController;
 
         private readonly List<PotionButton> _spawnedPotions = new();
         private readonly Dictionary<CombatEntity, (HealthBar bar, StatusLine line)> _enemyUi = new();
 
         private ICombatService _combatService;
 
+        public event Action OnEndTurn;
+
         private void OnEnable()
         {
             _combatService = GService.GetService<ICombatService>();
             if (_combatService != null)
                 _combatService.OnAbilityResolved += UpdateBars;
-
-            if (_potionController)
-            {
-                _potionController.OnUsesChanged += UpdatePotionUses;
-                UpdatePotionUses(_potionController.RemainingUses);
-            }
+            if (endTurnButton)
+                endTurnButton.onClick.AddListener(RaiseEndTurn);
         }
 
         private void OnDisable()
@@ -67,12 +59,33 @@ namespace _Core._Combat.UI
             if (_combatService != null)
                 _combatService.OnAbilityResolved -= UpdateBars;
 
-            if (_potionController)
-                _potionController.OnUsesChanged -= UpdatePotionUses;
+            if (endTurnButton)
+                endTurnButton.onClick.RemoveListener(RaiseEndTurn);
+
+            var potions = _player?.GetComponent<PotionController>();
+            if (potions)
+                potions.OnUsesChanged -= UpdatePotionUses;
 
             ClearEnemies();
         }
 
+        private void RaiseEndTurn()
+        {
+            OnEndTurn?.Invoke();
+        }
+
+        public void BindPlayer(PlayerEntity player)
+        {
+            _player = player;
+            if (playerStatusIndicator)
+            {
+                playerStatusIndicator.SetPassives(player.Passives);
+                player.GetComponent<StatusController>()?.SetIndicator(playerStatusIndicator);
+            }
+            UpdateBars();
+            UpdateUltimate();
+            BindPotions();
+        }
         public void BindPlayer(PlayerEntity player)
         {
             _player = player;
