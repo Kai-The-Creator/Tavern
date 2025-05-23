@@ -66,7 +66,6 @@ namespace _Core._Combat.Services
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 await RunTurn(player);
-                await player.WaitEndTurn();
                 _state = DetermineBattleState();
                 if (_state == BattleState.Victory || _state == BattleState.Defeat || token.IsCancellationRequested)
                     break;
