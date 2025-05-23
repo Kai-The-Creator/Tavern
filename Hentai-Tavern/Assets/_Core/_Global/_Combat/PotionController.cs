@@ -41,7 +41,8 @@ namespace _Core._Combat
 
         public void RegisterUse()
         {
-            _usedThisTurn++;
+            var limit = _config ? _config.PotionsPerTurn : 0;
+            _usedThisTurn = Mathf.Min(_usedThisTurn + 1, limit);
             OnUsesChanged?.Invoke(RemainingUses);
         }
 
