@@ -17,12 +17,15 @@ namespace _Core.GameEvents.Battle
         [Header("Prefabs")]
         [SerializeField] private CombatEntity playerPrefab;
         [SerializeField] private List<CombatEntity> enemyPrefabs = new();
+        [SerializeField] private List<BehaviourPatternSO> enemyBehaviours = new();
+        [SerializeField] private AbilitySelectionPanel selectionPanelPrefab;
 
         [Header("Spawn points")]
         [SerializeField] private Transform playerSpawn;
         [SerializeField] private List<Transform> enemySpawns = new();
 
         private readonly List<CombatEntity> spawned = new();
+        private AbilitySelectionPanel activePanel;
         private CombatService combat;
         private CancellationTokenSource battleCts;
 
@@ -78,15 +81,32 @@ namespace _Core.GameEvents.Battle
         private void SpawnCombatants()
         {
             ClearCombatants();
+            PlayerEntity player = null;
             if (playerPrefab && playerSpawn)
-                spawned.Add(Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation));
+            {
+                player = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation) as PlayerEntity;
+                if (player != null)
+                {
+                    spawned.Add(player);
+                    if (selectionPanelPrefab)
+                    {
+                        activePanel = Instantiate(selectionPanelPrefab);
+                        player.SetSelectionPanel(activePanel);
+                    }
+                }
+            }
 
             for (int i = 0; i < enemyPrefabs.Count && i < enemySpawns.Count; i++)
             {
                 var prefab = enemyPrefabs[i];
                 var spawn = enemySpawns[i];
                 if (prefab && spawn)
-                    spawned.Add(Instantiate(prefab, spawn.position, spawn.rotation));
+                {
+                    var enemy = Instantiate(prefab, spawn.position, spawn.rotation) as EnemyEntity;
+                    if (enemy && i < enemyBehaviours.Count && enemyBehaviours[i])
+                        enemy.SetBehaviour(enemyBehaviours[i]);
+                    spawned.Add(enemy);
+                }
             }
         }
 
@@ -95,6 +115,11 @@ namespace _Core.GameEvents.Battle
             foreach (var e in spawned)
                 if (e) Destroy(e.gameObject);
             spawned.Clear();
+            if (activePanel)
+            {
+                Destroy(activePanel.gameObject);
+                activePanel = null;
+            }
         }
     }
 }

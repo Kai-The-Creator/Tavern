@@ -24,6 +24,7 @@ namespace _Core._Combat
         public int CostMana;
         public int CostStamina;
         public int Cooldown;
+        [Min(1)] public int MaxTargets = 1;
         public List<AbilityEffect> Effects = new List<AbilityEffect>();
         public TargetSelector Target;
     }

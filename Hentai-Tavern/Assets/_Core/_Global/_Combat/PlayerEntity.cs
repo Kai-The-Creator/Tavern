@@ -8,7 +8,7 @@ namespace _Core._Combat
     public class PlayerEntity : CombatEntity
     {
         [SerializeField] private AbilitySO[] abilities;
-        [SerializeField] private AbilitySelectionPanel selectionPanel;
+        private AbilitySelectionPanel _selectionPanel;
         private BattleConfig _config;
         private PotionController _potionController;
 
@@ -26,17 +26,32 @@ namespace _Core._Combat
 
         public override async UniTask<AbilitySO> SelectAbility()
         {
-            var list = new List<AbilitySO>(abilities);
+            var list = new List<AbilitySO>();
+            foreach (var a in abilities)
+                if (!IsOnCooldown(a))
+                    list.Add(a);
             if (_config && Resources.UltimateCharge >= 100f && _config.UltimateAbility)
-                list.Add(_config.UltimateAbility);
+                if (!IsOnCooldown(_config.UltimateAbility))
+                    list.Add(_config.UltimateAbility);
 
             if (_potionController)
-                list.AddRange(_potionController.ActiveAbilities);
+                foreach (var a in _potionController.ActiveAbilities)
+                    if (!IsOnCooldown(a))
+                        list.Add(a);
 
-            if (selectionPanel == null || list.Count == 0)
+            if (_selectionPanel == null || list.Count == 0)
                 return list.FirstOrDefault();
+            return await _selectionPanel.ChooseAbility(list, GetCooldown);
+        }
 
-            return await selectionPanel.ChooseAbility(list);
+        public void SetSelectionPanel(AbilitySelectionPanel panel)
+        {
+            _selectionPanel = panel;
+        }
+
+        public void SetAbilities(IEnumerable<AbilitySO> list)
+        {
+            abilities = list?.ToArray() ?? System.Array.Empty<AbilitySO>();
         }
 
     }
