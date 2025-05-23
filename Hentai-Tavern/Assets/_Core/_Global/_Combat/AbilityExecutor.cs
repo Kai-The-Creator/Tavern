@@ -12,6 +12,7 @@ namespace _Core._Combat
             if (ability == null) return;
 
             if (source is CombatEntity src && ability is not PotionAbilitySO)
+            if (source is CombatEntity src)
             {
                 src.Resources.Mana -= ability.CostMana;
                 src.Resources.Stamina -= ability.CostStamina;
@@ -57,11 +58,13 @@ namespace _Core._Combat
                     var status = tEntity.GetComponent<StatusController>();
                     if (status)
                         physical = status.AbsorbShieldDamage(physical);
+
                     if (status && remove.Length > 0)
                     {
                         foreach (var r in remove)
                             status.RemoveStatus(r);
                     }
+
                 }
 
                 if (physical > 0)
