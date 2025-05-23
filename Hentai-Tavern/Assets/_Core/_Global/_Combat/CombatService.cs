@@ -141,6 +141,7 @@ namespace _Core._Combat.Services
                 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 _state = DetermineBattleState();
 =======
                 if (entity.IsPlayer && entity is PlayerEntity player)
@@ -148,6 +149,8 @@ namespace _Core._Combat.Services
                     await player.WaitEndTurn();
                 }
 
+=======
+>>>>>>> parent of 213c7c4 (Merge pull request #20 from Kai-The-Creator/codex/add-endturnbutton-to-battlehud-and-wait-for-endturn)
                 _state = DetermineBattleState();
 
                 if (ability is PotionAbilitySO)

@@ -31,9 +31,6 @@ namespace _Core._Combat.UI
         [SerializeField] private Button ultimateButton;
         [SerializeField] private Slider ultimateSlider;
 
-        [Header("Controls")]
-        [SerializeField] private Button endTurnButton;
-
         [Header("Status")]
         [SerializeField] private StatusIndicator playerStatusIndicator;
 
@@ -46,8 +43,6 @@ namespace _Core._Combat.UI
 
         private PlayerEntity _player;
 
-        private UniTaskCompletionSource<bool> _endTurnTcs;
-
         private readonly List<PotionButton> _spawnedPotions = new();
         private readonly Dictionary<CombatEntity, (HealthBar bar, StatusLine line)> _enemyUi = new();
 
@@ -58,11 +53,6 @@ namespace _Core._Combat.UI
             _combatService = GService.GetService<ICombatService>();
             if (_combatService != null)
                 _combatService.OnAbilityResolved += UpdateBars;
-
-            if (endTurnButton)
-            {
-                endTurnButton.interactable = false;
-            }
         }
 
         private void OnDisable()
@@ -73,12 +63,6 @@ namespace _Core._Combat.UI
             var potions = _player?.GetComponent<PotionController>();
             if (potions)
                 potions.OnUsesChanged -= UpdatePotionUses;
-
-            if (endTurnButton)
-                endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
-
-            _endTurnTcs?.TrySetCanceled();
-            _endTurnTcs = null;
 
             ClearEnemies();
         }
@@ -144,26 +128,6 @@ namespace _Core._Combat.UI
             ClearPotions();
 
             return index == 0 ? await abilityTask : await tcs.Task;
-        }
-
-        public async UniTask WaitEndTurn()
-        {
-            if (endTurnButton == null)
-                return;
-
-            _endTurnTcs = new UniTaskCompletionSource<bool>();
-            endTurnButton.onClick.AddListener(OnEndTurnClicked);
-            endTurnButton.interactable = true;
-
-            await _endTurnTcs.Task;
-        }
-
-        private void OnEndTurnClicked()
-        {
-            endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
-            endTurnButton.interactable = false;
-            _endTurnTcs?.TrySetResult(true);
-            _endTurnTcs = null;
         }
 
         private void BindPotions()
