@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -51,11 +51,7 @@ namespace _Core.GameEvents.Battle
             await combat.StartBattle(battleCts.Token);
 
             ClearCombatants();
-            IsGameActive = false;
-        }
-
-        public UniTask PauseGame()
-        {
+@@ -56,45 +59,67 @@ namespace _Core.GameEvents.Battle
             IsPaused = true;
             return UniTask.CompletedTask;
         }
