@@ -610,6 +610,8 @@ GameObject:
   - component: {fileID: 4001153111320099579}
   - component: {fileID: 8445665028101282225}
   - component: {fileID: 5715725480399431068}
+  - component: {fileID: 1234567890123456789}
+  - component: {fileID: 987654321098765432}
   - component: {fileID: 4684493665996765281}
   m_Layer: 0
   m_Name: BattleEnemy (Test)
@@ -708,8 +710,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faa94047457d37e4b8d099fd5bdc8d65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
+--- !u!114 &1234567890123456789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6483885715470958433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e3b41dd5a5debd469c823f4ded54835, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+--- !u!114 &987654321098765432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6483885715470958433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22c50423cb68a04088c4c4e62daa5da, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  indicator: {fileID: 5841092131374991065}
 --- !u!65 &4684493665996765281
 BoxCollider:
   m_ObjectHideFlags: 0

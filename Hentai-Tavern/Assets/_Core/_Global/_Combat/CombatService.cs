@@ -59,8 +59,19 @@ namespace _Core._Combat.Services
             _state = BattleState.PlayerTurn;
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
+<<<<<<< HEAD
                 var entity = combatants[_current];
                 if (!entity.IsAlive)
+=======
+                await RunTurn(player);
+                await player.WaitEndTurn();
+                _state = DetermineBattleState();
+                if (_state == BattleState.Victory || _state == BattleState.Defeat || token.IsCancellationRequested)
+                    break;
+
+                var enemies = combatants.Where(c => !c.IsPlayer && c.IsAlive).ToList();
+                foreach (var enemy in enemies)
+>>>>>>> parent of b7135a8 (Revert "Add wait for end of player turn before enemy actions")
                 {
                     _current = (_current + 1) % combatants.Count;
                     continue;
