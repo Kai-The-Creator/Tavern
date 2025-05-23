@@ -8,7 +8,7 @@ namespace _Core._Combat
     public class PlayerEntity : CombatEntity
     {
         [SerializeField] private AbilitySO[] abilities;
-        private AbilitySelectionPanel _selectionPanel;
+        private BattleHUD _hud;
         private BattleConfig _config;
 
         public override UniTask OnTurnStart(BattleConfig config)
@@ -23,23 +23,22 @@ namespace _Core._Combat
             foreach (var a in abilities)
                 if (!IsOnCooldown(a) && CanUse(a))
                     list.Add(a);
-            if (_config && Resources.UltimateCharge >= 100f && _config.UltimateAbility)
-                if (!IsOnCooldown(_config.UltimateAbility) && CanUse(_config.UltimateAbility))
-                    list.Add(_config.UltimateAbility);
-
-            if (_potionController)
-                foreach (var a in _potionController.ActiveAbilities)
-                    if (!IsOnCooldown(a) && CanUse(a))
-                        list.Add(a);
-
-            if (_selectionPanel == null || list.Count == 0)
+            if (_hud == null || list.Count == 0)
                 return list.FirstOrDefault();
-            return await _selectionPanel.ChooseAbility(list, GetCooldown);
+            return await _hud.ChooseAbility(list, GetCooldown);
         }
 
-        public void SetSelectionPanel(AbilitySelectionPanel panel)
+        public bool CanUseUltimate()
         {
-            _selectionPanel = panel;
+            var ult = UltimateAbility;
+            return ult != null && Resources.UltimateCharge >= 100f && !IsOnCooldown(ult) && CanUse(ult);
+        }
+
+        public AbilitySO UltimateAbility => _config ? _config.UltimateAbility : null;
+
+        public void SetHUD(BattleHUD hud)
+        {
+            _hud = hud;
         }
 
         public void SetAbilities(IEnumerable<AbilitySO> list)

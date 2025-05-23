@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using _Core._Combat.Services;
+using _Core._Combat; 
 using _Core._Global.Services;
 
 namespace _Core._Combat.UI
@@ -19,14 +21,30 @@ namespace _Core._Combat.UI
         [SerializeField] private Slider staminaBar;
         [Header("Panels")]
         [SerializeField] private AbilitySelectionPanel abilityPanel;
-        [SerializeField] private PotionIndicator potionIndicator;
+
+        [Header("Potions")]
+        [SerializeField] private PotionButton potionButtonPrefab;
+        [SerializeField] private Transform potionContainer;
+        [SerializeField] private TextMeshProUGUI potionUsesLabel;
+
+        [Header("Ultimate")]
+        [SerializeField] private Button ultimateButton;
+        [SerializeField] private Slider ultimateSlider;
+
+        [Header("Status")]
+        [SerializeField] private StatusIndicator playerStatusIndicator;
+
+        [Header("Enemy UI")]
+        [SerializeField] private HealthBar healthBarPrefab;
+        [SerializeField] private StatusLine statusLinePrefab;
+        [SerializeField] private Transform enemyContainer;
 
         public AbilitySelectionPanel AbilityPanel => abilityPanel;
-        public PotionIndicator PotionIndicator => potionIndicator;
 
         private PlayerEntity _player;
 
-        private readonly List<Button> _spawnedAbilities = new();
+        private readonly List<PotionButton> _spawnedPotions = new();
+        private readonly Dictionary<CombatEntity, (HealthBar bar, StatusLine line)> _enemyUi = new();
 
         private ICombatService _combatService;
 
@@ -41,13 +59,25 @@ namespace _Core._Combat.UI
         {
             if (_combatService != null)
                 _combatService.OnAbilityResolved -= UpdateBars;
+
+            var potions = _player?.GetComponent<PotionController>();
+            if (potions)
+                potions.OnUsesChanged -= UpdatePotionUses;
+
+            ClearEnemies();
         }
 
         public void BindPlayer(PlayerEntity player)
         {
             _player = player;
+            if (playerStatusIndicator)
+            {
+                playerStatusIndicator.SetPassives(player.Passives);
+                player.GetComponent<StatusController>()?.SetIndicator(playerStatusIndicator);
+            }
             UpdateBars();
-            potionIndicator?.UpdateText();
+            UpdateUltimate();
+            BindPotions();
         }
 
         public void UpdateBars()
@@ -56,11 +86,118 @@ namespace _Core._Combat.UI
             hpBar.value = (float)_player.Resources.Health / _player.Stats.MaxHealth;
             manaBar.value = (float)_player.Resources.Mana / _player.Stats.MaxMana;
             staminaBar.value = (float)_player.Resources.Stamina / _player.Stats.MaxStamina;
+            UpdateUltimate();
         }
 
-        public UniTask<AbilitySO> ChooseAbility(IReadOnlyList<AbilitySO> abilities, Func<AbilitySO, int> cooldown)
+        public async UniTask<AbilitySO> ChooseAbility(IReadOnlyList<AbilitySO> abilities, Func<AbilitySO, int> cooldown)
         {
-            return abilityPanel.ChooseAbility(abilities, cooldown);
+            var tcs = new UniTaskCompletionSource<AbilitySO>();
+
+            if (ultimateButton)
+            {
+                ultimateButton.onClick.RemoveAllListeners();
+                if (_player != null && _player.CanUseUltimate())
+                {
+                    ultimateButton.interactable = true;
+                    ultimateButton.onClick.AddListener(() => tcs.TrySetResult(_player.UltimateAbility));
+                }
+                else
+                {
+                    ultimateButton.interactable = false;
+                }
+            }
+
+            ClearPotions();
+            var potions = _player?.GetComponent<PotionController>();
+            if (potions && potionButtonPrefab && potionContainer)
+            {
+                foreach (var p in potions.ActiveAbilities)
+                {
+                    if (p is not PotionAbilitySO potion) continue;
+                    var btn = Instantiate(potionButtonPrefab, potionContainer);
+                    btn.Setup(potion);
+                    btn.Button.onClick.AddListener(() => tcs.TrySetResult(potion));
+                    _spawnedPotions.Add(btn);
+                }
+            }
+
+            var abilityTask = abilityPanel.ChooseAbility(abilities, cooldown);
+            var index = await UniTask.WhenAny(abilityTask, tcs.Task);
+
+            if (ultimateButton) ultimateButton.onClick.RemoveAllListeners();
+            ClearPotions();
+
+            return index == 0 ? await abilityTask : await tcs.Task;
+        }
+
+        private void BindPotions()
+        {
+            var potions = _player?.GetComponent<PotionController>();
+            if (potions)
+            {
+                potions.OnUsesChanged += UpdatePotionUses;
+                UpdatePotionUses(potions.RemainingUses);
+            }
+        }
+
+        private void UpdatePotionUses(int count)
+        {
+            if (potionUsesLabel) potionUsesLabel.text = count.ToString();
+        }
+
+        private void ClearPotions()
+        {
+            foreach (var p in _spawnedPotions)
+                if (p) Destroy(p.gameObject);
+            _spawnedPotions.Clear();
+        }
+
+        public void BindEnemy(CombatEntity enemy)
+        {
+            if (enemyContainer == null) return;
+
+            HealthBar bar = null;
+            StatusLine line = null;
+
+            if (healthBarPrefab)
+            {
+                bar = Instantiate(healthBarPrefab, enemyContainer);
+                bar.SetTarget(enemy);
+            }
+
+            if (statusLinePrefab)
+            {
+                line = Instantiate(statusLinePrefab, enemyContainer);
+                line.Bind(enemy);
+            }
+
+            _enemyUi[enemy] = (bar, line);
+        }
+
+        public void UnbindEnemy(CombatEntity enemy)
+        {
+            if (_enemyUi.TryGetValue(enemy, out var ui))
+            {
+                if (ui.bar) Destroy(ui.bar.gameObject);
+                if (ui.line) Destroy(ui.line.gameObject);
+                _enemyUi.Remove(enemy);
+            }
+        }
+
+        public void ClearEnemies()
+        {
+            foreach (var kv in _enemyUi)
+            {
+                if (kv.Value.bar) Destroy(kv.Value.bar.gameObject);
+                if (kv.Value.line) Destroy(kv.Value.line.gameObject);
+            }
+            _enemyUi.Clear();
+        }
+
+        private void UpdateUltimate()
+        {
+            if (ultimateSlider && _player != null)
+                ultimateSlider.value = _player.Resources.UltimateCharge / 100f;
         }
     }
 }
