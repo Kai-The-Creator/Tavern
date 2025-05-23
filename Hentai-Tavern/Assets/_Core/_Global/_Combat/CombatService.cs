@@ -101,6 +101,11 @@ namespace _Core._Combat.Services
                     RaiseAbilityResolved();
                 }
 
+                if (entity.IsPlayer && entity is PlayerEntity player)
+                {
+                    await player.WaitEndTurn();
+                }
+
                 _state = DetermineBattleState();
                 _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
