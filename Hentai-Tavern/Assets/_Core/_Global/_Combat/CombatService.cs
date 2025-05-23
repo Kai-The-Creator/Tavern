@@ -57,6 +57,7 @@ namespace _Core._Combat.Services
         {
             _current = 0;
             _state = BattleState.PlayerTurn;
+<<<<<<< HEAD
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
 <<<<<<< HEAD
@@ -85,6 +86,34 @@ namespace _Core._Combat.Services
                     _current = (_current + 1) % combatants.Count;
                     await UniTask.Yield();
                     continue;
+=======
+            var turnStarted = false;
+            while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
+            {
+                var entity = combatants[_current];
+                if (!entity.IsAlive)
+                {
+                    _current = (_current + 1) % combatants.Count;
+                    turnStarted = false;
+                    continue;
+                }
+
+                if (!turnStarted)
+                {
+                    await entity.OnTurnStart(config);
+
+                    var status = entity.GetComponent<StatusController>();
+                    if (status != null && status.SkipNextTurn)
+                    {
+                        status.SkipNextTurn = false;
+                        _current = (_current + 1) % combatants.Count;
+                        turnStarted = false;
+                        await UniTask.Yield();
+                        continue;
+                    }
+
+                    turnStarted = true;
+>>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
                 }
 
                 var ability = await entity.SelectAbility();
@@ -111,12 +140,30 @@ namespace _Core._Combat.Services
                     RaiseAbilityResolved();
                 }
 
+<<<<<<< HEAD
                 _state = DetermineBattleState();
+=======
+                if (entity.IsPlayer && entity is PlayerEntity player)
+                {
+                    await player.WaitEndTurn();
+                }
+
+                _state = DetermineBattleState();
+
+                if (ability is PotionAbilitySO)
+                {
+                    await UniTask.Yield();
+                    continue;
+                }
+
+                turnStarted = false;
+>>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
                 _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
             }
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         private async UniTask RunTurn(CombatEntity entity)
         {
@@ -160,6 +207,8 @@ namespace _Core._Combat.Services
 
 =======
 >>>>>>> parent of f5ba74c (Refactor CombatService turn loop)
+=======
+>>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
         private async UniTask<IReadOnlyList<ICombatEntity>> SelectTargets(CombatEntity source, AbilitySO ability)
         {
             switch (ability.Target)
