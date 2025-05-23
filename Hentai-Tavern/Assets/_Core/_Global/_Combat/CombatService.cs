@@ -107,7 +107,9 @@ namespace _Core._Combat.Services
                 case TargetSelector.Self:
                     return new ICombatEntity[] { source };
                 case TargetSelector.SingleEnemy:
-                    var enemies = combatants.Where(c => c.IsPlayer != source.IsPlayer && c.IsAlive).ToList();
+                    var enemies = combatants
+                        .Where(c => c.IsPlayer != source.IsPlayer && c.Resources.Health > 0)
+                        .ToList();
                     if (source.IsPlayer && ability.MaxTargets > 1)
                     {
                         var selector = source.GetComponent<TargetSelectionController>();
@@ -117,7 +119,10 @@ namespace _Core._Combat.Services
                     var enemy = enemies.FirstOrDefault();
                     return enemy != null ? new ICombatEntity[] { enemy } : new ICombatEntity[] { source };
                 case TargetSelector.AllEnemies:
-                    return combatants.Where(c => c.IsPlayer != source.IsPlayer && c.IsAlive).Cast<ICombatEntity>().ToList();
+                    return combatants
+                        .Where(c => c.IsPlayer != source.IsPlayer && c.Resources.Health > 0)
+                        .Cast<ICombatEntity>()
+                        .ToList();
                 default:
                     return new ICombatEntity[] { source };
             }
