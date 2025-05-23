@@ -14,7 +14,13 @@ namespace _Core._Combat
         }
 
         private readonly List<ActiveStatus> _statuses = new();
-        private StatusIndicator _indicator;
+        [SerializeField] private StatusIndicator indicator;
+        public StatusIndicator Indicator => indicator;
+
+        /// <summary>
+        /// The indicator used to display active statuses.
+        /// </summary>
+        public StatusIndicator Indicator => _indicator;
 
         /// <summary>
         /// The indicator used to display active statuses.
@@ -30,7 +36,6 @@ namespace _Core._Combat
 
         private void Awake()
         {
-            _indicator = GetComponent<StatusIndicator>();
             if (_indicator == null)
                 _indicator = GetComponent<StatusIndicator>();
         }
@@ -42,6 +47,7 @@ namespace _Core._Combat
         {
             _indicator = indicator;
         }
+
 
         public bool IsStunned => _statuses.Any(s => s.Effect.Type == StatusType.Stun);
 
@@ -67,7 +73,7 @@ namespace _Core._Combat
             {
                 SkipNextTurn = true;
             }
-            _indicator?.AddStatus(effect);
+            indicator?.AddStatus(effect);
         }
 
         public void TickStartTurn(CombatEntity entity)
@@ -94,7 +100,7 @@ namespace _Core._Combat
                 if (s.Remaining <= 0 || (s.Effect.Type == StatusType.Shield && s.ShieldLeft <= 0))
                 {
                     _statuses.RemoveAt(i);
-                    _indicator?.RemoveStatus(s.Effect.Type);
+                    indicator?.RemoveStatus(s.Effect.Type);
                 }
             }
             entity.Resources.Clamp(entity.Stats);
@@ -117,8 +123,8 @@ namespace _Core._Combat
                 if (_statuses[i].Effect.Type == type)
                     _statuses.RemoveAt(i);
             }
-            if (_statuses.All(s => s.Effect.Type != type))
-                _indicator?.RemoveStatus(type);
+            if (!_statuses.Any(s => s.Effect.Type == type))
+                indicator?.RemoveStatus(type);
         }
     }
 }

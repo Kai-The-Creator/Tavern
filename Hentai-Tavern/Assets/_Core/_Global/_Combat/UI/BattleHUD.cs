@@ -138,19 +138,12 @@ namespace _Core._Combat.UI
             }
 
             var abilityTask = abilityPanel.ChooseAbility(abilities, cooldown);
+            var index = await UniTask.WhenAny(abilityTask, tcs.Task);
 
-            // оба таска – UniTask<AbilitySO>
-                        var (winnerIndex, abilityResult, tcsResult) =
-                            await UniTask.WhenAny(abilityTask, tcs.Task);
+            if (ultimateButton) ultimateButton.onClick.RemoveAllListeners();
+            ClearPotions();
 
-            // housekeeping
-                        if (ultimateButton != null)
-                            ultimateButton.onClick.RemoveAllListeners();
-                        ClearPotions();
-
-            // abilityResult содержит результат abilityTask,
-            // tcsResult   – результат tcs.Task
-            return winnerIndex == 0 ? abilityResult : tcsResult;
+            return index == 0 ? await abilityTask : await tcs.Task;
         }
 
         public async UniTask WaitEndTurn()

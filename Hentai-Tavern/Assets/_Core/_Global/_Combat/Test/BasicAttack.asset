@@ -13,15 +13,11 @@ MonoBehaviour:
   m_Name: BasicAttack
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: c5f379770ddf3470cab5328d5615bb23, type: 3}
-  PhysicalDamage: 1
+  PhysicalDamage: 10
   MagicalDamage: 0
   CostMana: 15
   CostStamina: 15
   Cooldown: 3
   MaxTargets: 1
-  Effects:
-  - PhysicalDamage: 1
-    MagicalDamage: 0
-    AppliedStatuses:
-    - {fileID: 11400000, guid: b4cfb8e94d470ea458acd3ea23177da2, type: 2}
+  Effects: []
   Target: 1
