@@ -21,6 +21,9 @@ namespace _Core._Combat.UI
         [Header("Panels")]
         [SerializeField] private AbilitySelectionPanel abilityPanel;
 
+        [Header("Status")]
+        [SerializeField] private StatusIndicator statusIndicator;
+
         [Header("Potions")]
         [SerializeField] private PotionButton potionButtonPrefab;
         [SerializeField] private Transform potionContainer;
@@ -53,6 +56,10 @@ namespace _Core._Combat.UI
             var potions = _player?.GetComponent<PotionController>();
             if (potions)
                 potions.OnUsesChanged -= UpdatePotionUses;
+
+            var controller = _player?.GetComponent<StatusController>();
+            if (controller && controller.Indicator == statusIndicator)
+                controller.SetIndicator(null);
         }
 
         public void BindPlayer(PlayerEntity player)
@@ -61,6 +68,13 @@ namespace _Core._Combat.UI
             UpdateBars();
             UpdateUltimate();
             BindPotions();
+            if (statusIndicator && _player)
+            {
+                var controller = _player.GetComponent<StatusController>();
+                if (controller)
+                    controller.SetIndicator(statusIndicator);
+                statusIndicator.SetPassives(_player.Passives);
+            }
         }
 
         public void UpdateBars()
