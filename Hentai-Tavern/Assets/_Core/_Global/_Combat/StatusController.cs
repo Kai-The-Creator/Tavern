@@ -70,6 +70,7 @@ namespace _Core._Combat
 
         public void TickStartTurn(CombatEntity entity)
         {
+            bool stunActive = false;
             for (int i = _statuses.Count - 1; i >= 0; i--)
             {
                 var s = _statuses[i];
@@ -82,9 +83,9 @@ namespace _Core._Combat
                         entity.Resources.Health += s.Effect.Value;
                         break;
                     case StatusType.Stun:
-                        // Stun effects simply reduce their duration here.
-                        // SkipNextTurn is handled separately until the combat
-                        // loop consumes it.
+                        // Mark the upcoming turn as skipped and tick the stun
+                        // on this skipped turn.
+                        stunActive = true;
                         break;
                 }
 
@@ -95,6 +96,8 @@ namespace _Core._Combat
                     _indicator?.RemoveStatus(s.Effect.Type);
                 }
             }
+
+            SkipNextTurn = stunActive;
             entity.Resources.Clamp(entity.Stats);
         }
 
