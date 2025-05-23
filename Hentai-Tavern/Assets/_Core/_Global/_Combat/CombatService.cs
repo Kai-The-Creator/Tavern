@@ -222,18 +222,12 @@ namespace _Core._Combat.Services
                     var enemies = combatants
                         .Where(c => c.IsPlayer != source.IsPlayer && c.Resources.Health > 0)
                         .ToList();
-                    if (source.IsPlayer)
+                    if (source.IsPlayer && ability.MaxTargets > 1)
                     {
                         var selector = source.GetComponent<TargetSelectionController>();
-                        if (selector != null && enemies.Count > 0)
-                        {
-                            var limit = ability.MaxTargets > 1 ? ability.MaxTargets : 1;
-                            var selected = await selector.SelectTargets(enemies, limit);
-                            if (selected != null && selected.Count > 0)
-                                return selected;
-                        }
+                        if (selector != null)
+                            return await selector.SelectTargets(enemies, ability.MaxTargets);
                     }
-
                     var enemy = enemies.FirstOrDefault();
                     return enemy != null ? new ICombatEntity[] { enemy } : new ICombatEntity[] { source };
                 case TargetSelector.AllEnemies:
