@@ -10,10 +10,12 @@ namespace _Core._Combat
         AllEnemies
     }
 
+    [System.Serializable]
     public class AbilityEffect
     {
         public int PhysicalDamage;
         public int MagicalDamage;
+        public StatusEffectSO[] AppliedStatuses = System.Array.Empty<StatusEffectSO>();
     }
 
     [CreateAssetMenu(fileName = "Ability", menuName = "Combat/Ability")]
