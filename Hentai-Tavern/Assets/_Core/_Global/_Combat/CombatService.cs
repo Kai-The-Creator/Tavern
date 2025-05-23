@@ -21,8 +21,10 @@ namespace _Core._Combat.Services
 
     public interface ICombatService : IService
     {
-        public void Configure(BattleConfig cfg, IList<CombatEntity> list);
-        public UniTask StartBattle(System.Threading.CancellationToken token);
+        event System.Action OnAbilityResolved;
+
+        void Configure(BattleConfig cfg, IList<CombatEntity> list);
+        UniTask StartBattle(System.Threading.CancellationToken token);
     }
 
     [DependsOn(typeof(ICameraService), typeof(IEquipService))]
@@ -34,6 +36,10 @@ namespace _Core._Combat.Services
         private int _current;
         private BattleState _state;
         public BattleState State => _state;
+
+        public event System.Action OnAbilityResolved;
+
+        private void RaiseAbilityResolved() => OnAbilityResolved?.Invoke();
 
         public override async UniTask OnStart()
         {
@@ -83,6 +89,7 @@ namespace _Core._Combat.Services
                     }
 
                     entity.Resources.Clamp(entity.Stats);
+                    RaiseAbilityResolved();
                 }
 
                 _state = DetermineBattleState();

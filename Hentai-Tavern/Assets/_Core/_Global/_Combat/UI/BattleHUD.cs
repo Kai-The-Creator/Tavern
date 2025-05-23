@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using _Core._Combat.Services;
+using _Core._Global.Services;
 
 namespace _Core._Combat.UI
 {
@@ -25,6 +27,21 @@ namespace _Core._Combat.UI
         private PlayerEntity _player;
 
         private readonly List<Button> _spawnedAbilities = new();
+
+        private ICombatService _combatService;
+
+        private void OnEnable()
+        {
+            _combatService = GService.GetService<ICombatService>();
+            if (_combatService != null)
+                _combatService.OnAbilityResolved += UpdateBars;
+        }
+
+        private void OnDisable()
+        {
+            if (_combatService != null)
+                _combatService.OnAbilityResolved -= UpdateBars;
+        }
 
         public void BindPlayer(PlayerEntity player)
         {
