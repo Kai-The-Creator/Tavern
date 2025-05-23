@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using _Core._Combat.Services;
-using _Core._Combat; 
 using _Core._Global.Services;
 
 namespace _Core._Combat.UI
@@ -94,6 +86,19 @@ namespace _Core._Combat.UI
             UpdateUltimate();
             BindPotions();
         }
+        public void BindPlayer(PlayerEntity player)
+        {
+            _player = player;
+            _potionController = _player ? _player.GetComponent<PotionController>() : null;
+            if (playerStatusIndicator)
+            {
+                playerStatusIndicator.SetPassives(player.Passives);
+                player.GetComponent<StatusController>()?.SetIndicator(playerStatusIndicator);
+            }
+            UpdateBars();
+            UpdateUltimate();
+            BindPotions();
+        }
 
         public void UpdateBars()
         {
@@ -125,7 +130,7 @@ namespace _Core._Combat.UI
             }
 
             ClearPotions();
-            var potions = _player?.GetComponent<PotionController>();
+            var potions = _potionController;
             if (potions && potionButtonPrefab && potionContainer)
             {
                 foreach (var p in potions.ActiveAbilities)
@@ -136,6 +141,7 @@ namespace _Core._Combat.UI
                     btn.Button.onClick.AddListener(() => tcs.TrySetResult(potion));
                     _spawnedPotions.Add(btn);
                 }
+                UpdatePotionUses(potions.RemainingUses);
             }
             // -----------------------------------------------------------------------
 
@@ -155,17 +161,24 @@ namespace _Core._Combat.UI
 
         private void BindPotions()
         {
-            var potions = _player?.GetComponent<PotionController>();
-            if (potions)
+            if (_potionController)
             {
-                potions.OnUsesChanged += UpdatePotionUses;
-                UpdatePotionUses(potions.RemainingUses);
+                _potionController.OnUsesChanged += UpdatePotionUses;
+                UpdatePotionUses(_potionController.RemainingUses);
             }
         }
 
         private void UpdatePotionUses(int count)
         {
-            if (potionUsesLabel) potionUsesLabel.text = count.ToString();
+            if (potionUsesLabel)
+                potionUsesLabel.text = count.ToString();
+
+            var interactable = count > 0;
+            foreach (var btn in _spawnedPotions)
+            {
+                if (btn)
+                    btn.Button.interactable = interactable;
+            }
         }
 
         private void ClearPotions()
