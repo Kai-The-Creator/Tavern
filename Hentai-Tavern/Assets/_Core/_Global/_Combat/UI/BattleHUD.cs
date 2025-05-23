@@ -169,8 +169,14 @@ namespace _Core._Combat.UI
         {
             endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
             endTurnButton.interactable = false;
+            abilityPanel?.CancelSelection();
             _endTurnTcs?.TrySetResult(true);
             _endTurnTcs = null;
+        }
+
+        public void ForceEndTurn()
+        {
+            OnEndTurnClicked();
         }
 
         private void BindPotions()

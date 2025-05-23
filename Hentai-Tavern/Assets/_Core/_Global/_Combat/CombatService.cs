@@ -98,6 +98,18 @@ namespace _Core._Combat.Services
                 return;
             }
 
+            if (entity is PlayerEntity player)
+            {
+                await RunPlayerTurn(player);
+            }
+            else
+            {
+                await RunEnemyTurn(entity);
+            }
+        }
+
+        private async UniTask RunEnemyTurn(CombatEntity entity)
+        {
             var ability = await entity.SelectAbility();
             if (ability == null)
                 return;
@@ -106,6 +118,39 @@ namespace _Core._Combat.Services
             await AbilityExecutor.Execute(entity, targets, ability);
             entity.StartCooldown(ability);
 
+            ApplyPostAbility(entity, ability, targets.Count);
+        }
+
+        private async UniTask RunPlayerTurn(PlayerEntity player)
+        {
+            var endTurnTask = player.WaitEndTurn();
+
+            while (!endTurnTask.Status.IsCompleted)
+            {
+                if (!player.HasUsableAbility())
+                {
+                    player.ForceEndTurn();
+                    break;
+                }
+
+                var abilityTask = player.SelectAbility();
+                var (winner, ability, _) = await UniTask.WhenAny(abilityTask, endTurnTask);
+
+                if (winner == 1 || ability == null)
+                    break;
+
+                var targets = await SelectTargets(player, ability);
+                await AbilityExecutor.Execute(player, targets, ability);
+                player.StartCooldown(ability);
+
+                ApplyPostAbility(player, ability, targets.Count);
+            }
+
+            await endTurnTask;
+        }
+
+        private void ApplyPostAbility(CombatEntity entity, AbilitySO ability, int targetCount)
+        {
             if (ability == config.UltimateAbility)
             {
                 entity.Resources.UltimateCharge = 0f;
@@ -116,7 +161,7 @@ namespace _Core._Combat.Services
             }
             else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
             {
-                entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
+                entity.Resources.UltimateCharge += config.UltChargePerAttack * targetCount;
             }
 
             entity.Resources.Clamp(entity.Stats);
