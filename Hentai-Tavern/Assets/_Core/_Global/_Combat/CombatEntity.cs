@@ -47,6 +47,8 @@ namespace _Core._Combat
             _statusController = GetComponent<StatusController>();
             _potionController = GetComponent<PotionController>();
             _cooldownController = GetComponent<AbilityCooldownController>();
+
+            GetComponent<StatusIndicator>()?.SetPassives(passives);
         }
 
         public virtual UniTask OnTurnStart(BattleConfig config)

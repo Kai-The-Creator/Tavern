@@ -13,7 +13,8 @@ namespace _Core._Combat
         private IItemService _items;
         private BattleConfig _config;
         private int _usedThisTurn;
-        private PotionIndicator _indicator;
+
+        public event System.Action<int> OnUsesChanged;
 
         public IReadOnlyList<AbilitySO> ActiveAbilities =>
             potions
@@ -27,14 +28,13 @@ namespace _Core._Combat
         private void Awake()
         {
             _items = GService.GetService<IItemService>();
-            _indicator = GetComponentInChildren<PotionIndicator>();
         }
 
         public void OnTurnStart(BattleConfig config)
         {
             _config = config;
             _usedThisTurn = 0;
-            _indicator?.UpdateText();
+            OnUsesChanged?.Invoke(RemainingUses);
         }
 
         public bool CanUsePotion() => _usedThisTurn < (_config ? _config.PotionsPerTurn : 0);
@@ -42,7 +42,7 @@ namespace _Core._Combat
         public void RegisterUse()
         {
             _usedThisTurn++;
-            _indicator?.UpdateText();
+            OnUsesChanged?.Invoke(RemainingUses);
         }
 
         public int RemainingUses => (_config ? _config.PotionsPerTurn : 0) - _usedThisTurn;

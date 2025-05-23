@@ -16,7 +16,7 @@ namespace _Core._Combat
 
         public async UniTask<AbilitySO> ChooseAbility(IReadOnlyList<AbilitySO> abilities, Func<AbilitySO, int> cooldownProvider = null)
         {
-            Clear();
+            ClearButtons();
             _tcs = new UniTaskCompletionSource<AbilitySO>();
             foreach (var ability in abilities)
             {
@@ -32,10 +32,10 @@ namespace _Core._Combat
         private void Select(AbilitySO ability)
         {
             _tcs.TrySetResult(ability);
-            Clear();
+            ClearButtons();
         }
 
-        private void Clear()
+        public void ClearButtons()
         {
             foreach (var b in _spawned)
                 Destroy(b.gameObject);
