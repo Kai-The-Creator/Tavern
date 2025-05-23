@@ -2,16 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using _Core._Combat.UI;
 
 namespace _Core._Combat
 {
     public class PlayerEntity : CombatEntity
     {
         [SerializeField] private AbilitySO[] abilities;
-        [SerializeField] private AbilitySelectionPanel selectionPanel; // legacy
-        [SerializeField] private BattleHUD hud;
-        public BattleHUD Hud { get => hud; set => hud = value; }
+        private AbilitySelectionPanel _selectionPanel;
         private BattleConfig _config;
         private PotionController _potionController;
 
@@ -21,12 +18,10 @@ namespace _Core._Combat
             _potionController = GetComponent<PotionController>();
         }
 
-        public override async UniTask OnTurnStart(BattleConfig config)
+        public override UniTask OnTurnStart(BattleConfig config)
         {
             _config = config;
-            hud?.BindPlayer(this);
-            await base.OnTurnStart(config);
-            hud?.UpdateBars();
+            return base.OnTurnStart(config);
         }
 
         public override async UniTask<AbilitySO> SelectAbility()
@@ -44,11 +39,19 @@ namespace _Core._Combat
                     if (!IsOnCooldown(a))
                         list.Add(a);
 
-            var panel = hud ? hud.AbilityPanel : selectionPanel;
-            if (panel == null || list.Count == 0)
+            if (_selectionPanel == null || list.Count == 0)
                 return list.FirstOrDefault();
+            return await _selectionPanel.ChooseAbility(list, GetCooldown);
+        }
 
-            return await panel.ChooseAbility(list, GetCooldown);
+        public void SetSelectionPanel(AbilitySelectionPanel panel)
+        {
+            _selectionPanel = panel;
+        }
+
+        public void SetAbilities(IEnumerable<AbilitySO> list)
+        {
+            abilities = list?.ToArray() ?? System.Array.Empty<AbilitySO>();
         }
 
     }

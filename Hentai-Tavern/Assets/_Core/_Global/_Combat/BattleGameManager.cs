@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using _Core._Combat;
-using _Core._Combat.UI;
 using _Core._Combat.Services;
 using _Core._Global.Services;
 using _Core.GameEvents;
@@ -17,15 +16,16 @@ namespace _Core.GameEvents.Battle
 
         [Header("Prefabs")]
         [SerializeField] private CombatEntity playerPrefab;
-        [SerializeField] private UI.BattleHUD hudPrefab;
         [SerializeField] private List<CombatEntity> enemyPrefabs = new();
+        [SerializeField] private List<BehaviourPatternSO> enemyBehaviours = new();
+        [SerializeField] private AbilitySelectionPanel selectionPanelPrefab;
 
         [Header("Spawn points")]
         [SerializeField] private Transform playerSpawn;
         [SerializeField] private List<Transform> enemySpawns = new();
 
         private readonly List<CombatEntity> spawned = new();
-        private UI.BattleHUD hudInstance;
+        private AbilitySelectionPanel activePanel;
         private CombatService combat;
         private CancellationTokenSource battleCts;
 
@@ -45,21 +45,13 @@ namespace _Core.GameEvents.Battle
 
             battleCts = new CancellationTokenSource();
 
-            if (hudPrefab)
-                hudInstance = Instantiate(hudPrefab);
             SpawnCombatants();
             combat.Configure(config, spawned);
 
             await combat.StartBattle(battleCts.Token);
 
             ClearCombatants();
-            if (hudInstance)
-                Destroy(hudInstance.gameObject);
-            IsGameActive = false;
-        }
-
-        public UniTask PauseGame()
-        {
+@@ -56,45 +59,67 @@ namespace _Core.GameEvents.Battle
             IsPaused = true;
             return UniTask.CompletedTask;
         }
@@ -85,14 +77,19 @@ namespace _Core.GameEvents.Battle
         private void SpawnCombatants()
         {
             ClearCombatants();
+            PlayerEntity player = null;
             if (playerPrefab && playerSpawn)
             {
-                var p = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation);
-                if (hudInstance && p is PlayerEntity player)
+                player = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation) as PlayerEntity;
+                if (player != null)
                 {
-                    player.Hud = hudInstance;
+                    spawned.Add(player);
+                    if (selectionPanelPrefab)
+                    {
+                        activePanel = Instantiate(selectionPanelPrefab);
+                        player.SetSelectionPanel(activePanel);
+                    }
                 }
-                spawned.Add(p);
             }
 
             for (int i = 0; i < enemyPrefabs.Count && i < enemySpawns.Count; i++)
@@ -100,7 +97,12 @@ namespace _Core.GameEvents.Battle
                 var prefab = enemyPrefabs[i];
                 var spawn = enemySpawns[i];
                 if (prefab && spawn)
-                    spawned.Add(Instantiate(prefab, spawn.position, spawn.rotation));
+                {
+                    var enemy = Instantiate(prefab, spawn.position, spawn.rotation) as EnemyEntity;
+                    if (enemy && i < enemyBehaviours.Count && enemyBehaviours[i])
+                        enemy.SetBehaviour(enemyBehaviours[i]);
+                    spawned.Add(enemy);
+                }
             }
         }
 
@@ -109,7 +111,11 @@ namespace _Core.GameEvents.Battle
             foreach (var e in spawned)
                 if (e) Destroy(e.gameObject);
             spawned.Clear();
-            hudInstance = null;
+            if (activePanel)
+            {
+                Destroy(activePanel.gameObject);
+                activePanel = null;
+            }
         }
     }
 }

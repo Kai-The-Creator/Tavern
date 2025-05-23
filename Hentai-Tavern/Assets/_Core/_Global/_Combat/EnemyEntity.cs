@@ -1,11 +1,11 @@
-﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace _Core._Combat
 {
     public class EnemyEntity : CombatEntity
     {
-        [SerializeField] private BehaviourPatternSO behaviour;
+        private BehaviourPatternSO behaviour;
         private int _index;
 
         public override UniTask<AbilitySO> SelectAbility()
@@ -22,6 +22,12 @@ namespace _Core._Combat
             }
 
             return UniTask.FromResult<AbilitySO>(null);
+        }
+
+        public void SetBehaviour(BehaviourPatternSO pattern)
+        {
+            behaviour = pattern;
+            _index = 0;
         }
     }
 }
