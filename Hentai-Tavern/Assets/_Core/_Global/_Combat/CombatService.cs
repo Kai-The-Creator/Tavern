@@ -65,17 +65,21 @@ namespace _Core._Combat.Services
             {
                 var entity = combatants[_current];
 
-                await RunTurn(entity);
+                AbilitySO ability;
+                do
+                {
+                    ability = await RunTurn(entity);
+                } while (ability is PotionAbilitySO);
 
                 _state = DetermineBattleState();
                 _current = (_current + 1) % combatants.Count;
             }
         }
 
-        private async UniTask RunTurn(CombatEntity entity)
+        private async UniTask<AbilitySO> RunTurn(CombatEntity entity)
         {
             if (entity == null || !entity.IsAlive)
-                return;
+                return null;
 
             await entity.OnTurnStart(config);
 
@@ -84,12 +88,12 @@ namespace _Core._Combat.Services
             {
                 status.SkipNextTurn = false;
                 await UniTask.Yield();
-                return;
+                return null;
             }
 
             var ability = await entity.SelectAbility();
             if (ability == null)
-                return;
+                return null;
 
             var targets = await SelectTargets(entity, ability);
             await AbilityExecutor.Execute(entity, targets, ability);
@@ -110,6 +114,8 @@ namespace _Core._Combat.Services
 
             entity.Resources.Clamp(entity.Stats);
             RaiseAbilityResolved();
+
+            return ability;
         }
 
         private async UniTask<IReadOnlyList<ICombatEntity>> SelectTargets(CombatEntity source, AbilitySO ability)
