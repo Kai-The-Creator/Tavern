@@ -71,5 +71,14 @@ namespace _Core._Combat
             if (shield.ShieldLeft <= 0) shield.Remaining = 0;
             return damage - absorbed;
         }
+
+        public void RemoveStatus(StatusType type)
+        {
+            for (int i = _statuses.Count - 1; i >= 0; i--)
+            {
+                if (_statuses[i].Effect.Type == type)
+                    _statuses.RemoveAt(i);
+            }
+        }
     }
 }

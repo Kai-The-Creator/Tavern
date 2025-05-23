@@ -22,6 +22,7 @@ namespace _Core._Combat
         [SerializeField] private ResourcePool resources = new ResourcePool();
         [SerializeField] private PassiveAbilitySO[] passives;
         private StatusController _statusController;
+        private PotionController _potionController;
 
         public string Id => id;
         public bool IsPlayer => isPlayer;
@@ -36,6 +37,7 @@ namespace _Core._Combat
             resources.Mana = stats.MaxMana;
             resources.Stamina = stats.MaxStamina;
             _statusController = GetComponent<StatusController>();
+            _potionController = GetComponent<PotionController>();
         }
 
         public virtual UniTask OnTurnStart(BattleConfig config)
@@ -53,6 +55,8 @@ namespace _Core._Combat
                     passive?.OnTurnStart(this);
                 }
             }
+
+            _potionController?.OnTurnStart(config);
 
             return UniTask.CompletedTask;
         }

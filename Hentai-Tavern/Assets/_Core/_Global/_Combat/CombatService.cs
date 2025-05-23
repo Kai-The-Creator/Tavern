@@ -2,6 +2,7 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using _Core._Global.Services;
+using _Core._Combat;
 using UnityEngine;
 
 namespace _Core._Combat.Services
@@ -59,6 +60,17 @@ namespace _Core._Combat.Services
                     await AbilityExecutor.Execute(entity, targets, ability);
 
                     if (ability == config.UltimateAbility)
+                    {
+                        entity.Resources.UltimateCharge = 0f;
+                    }
+                    else if (ability is PotionAbilitySO)
+                    {
+                        entity.GetComponent<PotionController>()?.RegisterUse();
+                    }
+                    else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
+                    {
+                        entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
+                    }
                         entity.Resources.UltimateCharge = 0f;
                     else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
                         entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;

@@ -11,6 +11,7 @@ namespace _Core._Combat
         {
             if (ability == null) return;
 
+            if (source is CombatEntity src && ability is not PotionAbilitySO)
             if (source is CombatEntity src)
             {
                 src.Resources.Mana -= ability.CostMana;
@@ -24,6 +25,18 @@ namespace _Core._Combat
             {
                 int physical = ability.PhysicalDamage;
                 int magical = ability.MagicalDamage;
+                int heal = 0;
+                int mana = 0;
+                int stamina = 0;
+                StatusType[] remove = System.Array.Empty<StatusType>();
+
+                if (ability is PotionAbilitySO potion)
+                {
+                    heal = potion.HealAmount;
+                    mana = potion.ManaAmount;
+                    stamina = potion.StaminaAmount;
+                    remove = potion.RemoveStatuses;
+                }
 
                 if (source is CombatEntity sEntity && sEntity.Passives != null)
                 {
@@ -45,12 +58,25 @@ namespace _Core._Combat
                     var status = tEntity.GetComponent<StatusController>();
                     if (status)
                         physical = status.AbsorbShieldDamage(physical);
+
+                    if (status && remove.Length > 0)
+                    {
+                        foreach (var r in remove)
+                            status.RemoveStatus(r);
+                    }
+
                 }
 
                 if (physical > 0)
                     target.Resources.Health -= physical;
                 if (magical > 0)
                     target.Resources.Mana -= magical;
+                if (heal > 0)
+                    target.Resources.Health += heal;
+                if (mana > 0)
+                    target.Resources.Mana += mana;
+                if (stamina > 0)
+                    target.Resources.Stamina += stamina;
 
                 target.Resources.Clamp(target.Stats);
             }
