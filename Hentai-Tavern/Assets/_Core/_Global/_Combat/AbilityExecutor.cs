@@ -78,16 +78,16 @@ namespace _Core._Combat
                         target.Resources.Mana -= magical;
 
                     var applyStatuses = effect.AppliedStatuses;
-                    // if (applyStatuses != null && applyStatuses.Length > 0)
-                    // {
-                    //     var status = target.GetComponent<StatusController>();
-                    //     if (status)
-                    //     {
-                    //         foreach (var s in applyStatuses)
-                    //             if (s != null)
-                    //                 status.Apply(s);
-                    //     }
-                    // }
+                    if (applyStatuses != null && applyStatuses.Length > 0)
+                    {
+                        var status = target is CombatEntity ce ? ce.GetComponent<StatusController>() : null;
+                        if (status != null)
+                        {
+                            foreach (var s in applyStatuses)
+                                if (s != null)
+                                    status.Apply(s);
+                        }
+                    }
                 }
 
                 if (heal > 0)
