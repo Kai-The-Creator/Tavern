@@ -33,7 +33,6 @@ namespace _Core._Combat.Services
         [SerializeField] private BattleConfig config;
         [SerializeField] private List<CombatEntity> combatants;
 
-        private int _current;
         private BattleState _state;
         public BattleState State => _state;
 
@@ -55,77 +54,73 @@ namespace _Core._Combat.Services
 
         public async UniTask StartBattle(System.Threading.CancellationToken token)
         {
-            _current = 0;
             _state = BattleState.PlayerTurn;
-            var turnStarted = false;
+
+            var player = combatants.FirstOrDefault(c => c.IsPlayer);
+            if (player == null)
+            {
+                _state = BattleState.Defeat;
+                return;
+            }
+
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
-                var entity = combatants[_current];
-                if (!entity.IsAlive)
-                {
-                    _current = (_current + 1) % combatants.Count;
-                    turnStarted = false;
-                    continue;
-                }
-
-                if (!turnStarted)
-                {
-                    await entity.OnTurnStart(config);
-
-                    var status = entity.GetComponent<StatusController>();
-                    if (status != null && status.SkipNextTurn)
-                    {
-                        status.SkipNextTurn = false;
-                        _current = (_current + 1) % combatants.Count;
-                        turnStarted = false;
-                        await UniTask.Yield();
-                        continue;
-                    }
-
-                    turnStarted = true;
-                }
-
-                var ability = await entity.SelectAbility();
-                if (ability != null)
-                {
-                    var targets = await SelectTargets(entity, ability);
-                    await AbilityExecutor.Execute(entity, targets, ability);
-                    entity.StartCooldown(ability);
-
-                    if (ability == config.UltimateAbility)
-                    {
-                        entity.Resources.UltimateCharge = 0f;
-                    }
-                    else if (ability is PotionAbilitySO)
-                    {
-                        entity.GetComponent<PotionController>()?.RegisterUse();
-                    }
-                    else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
-                    {
-                        entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
-                    }
-
-                    entity.Resources.Clamp(entity.Stats);
-                    RaiseAbilityResolved();
-                }
-
-                if (entity.IsPlayer && entity is PlayerEntity player)
-                {
-                    await player.WaitEndTurn();
-                }
-
+                await RunTurn(player);
                 _state = DetermineBattleState();
+                if (_state == BattleState.Victory || _state == BattleState.Defeat || token.IsCancellationRequested)
+                    break;
 
-                if (ability is PotionAbilitySO)
+                var enemies = combatants.Where(c => !c.IsPlayer && c.IsAlive).ToList();
+                foreach (var enemy in enemies)
                 {
-                    await UniTask.Yield();
-                    continue;
+                    await RunTurn(enemy);
+                    _state = DetermineBattleState();
+                    if (_state == BattleState.Victory || _state == BattleState.Defeat || token.IsCancellationRequested)
+                        break;
                 }
 
-                turnStarted = false;
-                _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
             }
+        }
+
+        private async UniTask RunTurn(CombatEntity entity)
+        {
+            if (entity == null || !entity.IsAlive)
+                return;
+
+            await entity.OnTurnStart(config);
+
+            var status = entity.GetComponent<StatusController>();
+            if (status != null && status.SkipNextTurn)
+            {
+                status.SkipNextTurn = false;
+                await UniTask.Yield();
+                return;
+            }
+
+            var ability = await entity.SelectAbility();
+            if (ability == null)
+                return;
+
+            var targets = await SelectTargets(entity, ability);
+            await AbilityExecutor.Execute(entity, targets, ability);
+            entity.StartCooldown(ability);
+
+            if (ability == config.UltimateAbility)
+            {
+                entity.Resources.UltimateCharge = 0f;
+            }
+            else if (ability is PotionAbilitySO)
+            {
+                entity.GetComponent<PotionController>()?.RegisterUse();
+            }
+            else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
+            {
+                entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
+            }
+
+            entity.Resources.Clamp(entity.Stats);
+            RaiseAbilityResolved();
         }
 
         private async UniTask<IReadOnlyList<ICombatEntity>> SelectTargets(CombatEntity source, AbilitySO ability)
