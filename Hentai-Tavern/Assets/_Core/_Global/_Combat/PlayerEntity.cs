@@ -26,17 +26,23 @@ namespace _Core._Combat
 
         public override async UniTask<AbilitySO> SelectAbility()
         {
-            var list = new List<AbilitySO>(abilities);
+            var list = new List<AbilitySO>();
+            foreach (var a in abilities)
+                if (!IsOnCooldown(a))
+                    list.Add(a);
             if (_config && Resources.UltimateCharge >= 100f && _config.UltimateAbility)
-                list.Add(_config.UltimateAbility);
+                if (!IsOnCooldown(_config.UltimateAbility))
+                    list.Add(_config.UltimateAbility);
 
             if (_potionController)
-                list.AddRange(_potionController.ActiveAbilities);
+                foreach (var a in _potionController.ActiveAbilities)
+                    if (!IsOnCooldown(a))
+                        list.Add(a);
 
             if (selectionPanel == null || list.Count == 0)
                 return list.FirstOrDefault();
 
-            return await selectionPanel.ChooseAbility(list);
+            return await selectionPanel.ChooseAbility(list, GetCooldown);
         }
 
     }

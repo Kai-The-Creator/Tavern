@@ -14,6 +14,12 @@ namespace _Core._Combat
         }
 
         private readonly List<ActiveStatus> _statuses = new();
+        private StatusIndicator _indicator;
+
+        private void Awake()
+        {
+            _indicator = GetComponent<StatusIndicator>();
+        }
 
         public bool IsStunned => _statuses.Any(s => s.Effect.Type == StatusType.Stun);
 
@@ -35,6 +41,7 @@ namespace _Core._Combat
                     ShieldLeft = effect.Value
                 });
             }
+            _indicator?.SetStatus(effect.Type, true);
         }
 
         public void TickStartTurn(CombatEntity entity)
@@ -57,7 +64,10 @@ namespace _Core._Combat
 
                 s.Remaining--;
                 if (s.Remaining <= 0 || (s.Effect.Type == StatusType.Shield && s.ShieldLeft <= 0))
+                {
                     _statuses.RemoveAt(i);
+                    _indicator?.SetStatus(s.Effect.Type, false);
+                }
             }
             entity.Resources.Clamp(entity.Stats);
         }
@@ -79,6 +89,7 @@ namespace _Core._Combat
                 if (_statuses[i].Effect.Type == type)
                     _statuses.RemoveAt(i);
             }
+            _indicator?.SetStatus(type, _statuses.Any(s => s.Effect.Type == type));
         }
     }
 }

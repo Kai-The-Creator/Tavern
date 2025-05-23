@@ -14,14 +14,16 @@ namespace _Core._Combat
         private readonly List<Button> _spawned = new();
         private UniTaskCompletionSource<AbilitySO> _tcs;
 
-        public async UniTask<AbilitySO> ChooseAbility(IReadOnlyList<AbilitySO> abilities)
+        public async UniTask<AbilitySO> ChooseAbility(IReadOnlyList<AbilitySO> abilities, Func<AbilitySO, int> cooldownProvider = null)
         {
             Clear();
             _tcs = new UniTaskCompletionSource<AbilitySO>();
             foreach (var ability in abilities)
             {
                 var btn = Instantiate(abilityButtonPrefab, container);
-                btn.GetComponentInChildren<Text>().text = ability.name;
+                var cd = cooldownProvider?.Invoke(ability) ?? 0;
+                btn.GetComponentInChildren<Text>().text = cd > 0 ? $"{ability.name} ({cd})" : ability.name;
+                btn.interactable = cd <= 0;
                 btn.onClick.AddListener(() => Select(ability));
                 _spawned.Add(btn);
             }

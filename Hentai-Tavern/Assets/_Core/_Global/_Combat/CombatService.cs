@@ -56,8 +56,9 @@ namespace _Core._Combat.Services
                 var ability = await entity.SelectAbility();
                 if (ability != null)
                 {
-                    var targets = SelectTargets(entity, ability).ToList();
+                    var targets = await SelectTargets(entity, ability);
                     await AbilityExecutor.Execute(entity, targets, ability);
+                    entity.StartCooldown(ability);
 
                     if (ability == config.UltimateAbility)
                     {
@@ -81,19 +82,26 @@ namespace _Core._Combat.Services
             }
         }
 
-        private IEnumerable<ICombatEntity> SelectTargets(CombatEntity source, AbilitySO ability)
+        private async UniTask<IReadOnlyList<ICombatEntity>> SelectTargets(CombatEntity source, AbilitySO ability)
         {
             switch (ability.Target)
             {
                 case TargetSelector.Self:
-                    return new[] { source };
+                    return new ICombatEntity[] { source };
                 case TargetSelector.SingleEnemy:
-                    var enemy = combatants.FirstOrDefault(c => c.IsPlayer != source.IsPlayer);
-                    return enemy != null ? new[] { (ICombatEntity)enemy } : new[] { source };
+                    var enemies = combatants.Where(c => c.IsPlayer != source.IsPlayer).ToList();
+                    if (source.IsPlayer && ability.MaxTargets > 1)
+                    {
+                        var selector = source.GetComponent<TargetSelectionController>();
+                        if (selector != null)
+                            return await selector.SelectTargets(enemies, ability.MaxTargets);
+                    }
+                    var enemy = enemies.FirstOrDefault();
+                    return enemy != null ? new ICombatEntity[] { enemy } : new ICombatEntity[] { source };
                 case TargetSelector.AllEnemies:
-                    return combatants.Where(c => c.IsPlayer != source.IsPlayer).Cast<ICombatEntity>();
+                    return combatants.Where(c => c.IsPlayer != source.IsPlayer).Cast<ICombatEntity>().ToList();
                 default:
-                    return new[] { source };
+                    return new ICombatEntity[] { source };
             }
         }
 
