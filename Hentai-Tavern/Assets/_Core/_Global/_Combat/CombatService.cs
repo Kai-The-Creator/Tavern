@@ -56,9 +56,12 @@ namespace _Core._Combat.Services
                 var entity = combatants[_current];
                 await entity.OnTurnStart(config);
 
-                if (entity.GetComponent<StatusController>()?.IsStunned == true)
+                var status = entity.GetComponent<StatusController>();
+                if (status != null && status.SkipNextTurn)
                 {
+                    status.SkipNextTurn = false;
                     _current = (_current + 1) % combatants.Count;
+                    await UniTask.Yield();
                     continue;
                 }
 
