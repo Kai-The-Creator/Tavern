@@ -21,6 +21,7 @@ namespace _Core._Combat
     [CreateAssetMenu(fileName = "Ability", menuName = "Combat/Ability")]
     public class AbilitySO : ScriptableObject
     {
+        public Sprite Icon;
         public int PhysicalDamage;
         public int MagicalDamage;
         public int CostMana;

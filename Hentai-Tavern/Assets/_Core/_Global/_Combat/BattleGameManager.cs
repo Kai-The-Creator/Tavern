@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using _Core._Combat;
 using _Core._Combat.Services;
+using _Core._Combat.UI;
 using _Core._Global.CameraService;
 using _Core._Global.Services;
 using _Core.GameEvents;
@@ -19,7 +20,7 @@ namespace _Core.GameEvents.Battle
         [SerializeField] private CombatEntity playerPrefab;
         [SerializeField] private List<CombatEntity> enemyPrefabs = new();
         [SerializeField] private List<BehaviourPatternSO> enemyBehaviours = new();
-        [SerializeField] private AbilitySelectionPanel selectionPanelPrefab;
+        [SerializeField] private UI.BattleHUD hudPrefab;
 
         [Header("Spawn points")]
         [SerializeField] private Transform playerSpawn;
@@ -27,8 +28,6 @@ namespace _Core.GameEvents.Battle
         [SerializeField] private Transform cameraPosition;
         
         private readonly List<CombatEntity> spawned = new();
-        private AbilitySelectionPanel activePanel;
-        
         private ICameraService cameraService;
         private ICombatService combat;
         private CancellationTokenSource battleCts;
@@ -94,14 +93,15 @@ namespace _Core.GameEvents.Battle
             PlayerEntity player = null;
             if (playerPrefab && playerSpawn)
             {
-                player = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation) as PlayerEntity;
+                player = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation, playerSpawn) as PlayerEntity;
                 if (player != null)
                 {
                     spawned.Add(player);
-                    if (selectionPanelPrefab)
+                    if (hudPrefab)
                     {
-                        activePanel = Instantiate(selectionPanelPrefab);
-                        player.SetSelectionPanel(activePanel);
+                        var hud = Instantiate(hudPrefab);
+                        hud.BindPlayer(player);
+                        player.SetSelectionPanel(hud.AbilityPanel);
                     }
                 }
             }
@@ -112,7 +112,7 @@ namespace _Core.GameEvents.Battle
                 var spawn = enemySpawns[i];
                 if (prefab && spawn)
                 {
-                    var enemy = Instantiate(prefab, spawn.position, spawn.rotation) as EnemyEntity;
+                    var enemy = Instantiate(prefab, spawn.position, spawn.rotation, spawn) as EnemyEntity;
                     if (enemy && i < enemyBehaviours.Count && enemyBehaviours[i])
                         enemy.SetBehaviour(enemyBehaviours[i]);
                     spawned.Add(enemy);
@@ -125,11 +125,9 @@ namespace _Core.GameEvents.Battle
             foreach (var e in spawned)
                 if (e) Destroy(e.gameObject);
             spawned.Clear();
-            if (activePanel)
-            {
-                Destroy(activePanel.gameObject);
-                activePanel = null;
-            }
+            var hud = FindObjectOfType<UI.BattleHUD>();
+            if (hud)
+                Destroy(hud.gameObject);
         }
     }
 }

@@ -15,18 +15,48 @@ namespace _Core._Combat
 
         public async UniTask<IReadOnlyList<ICombatEntity>> SelectTargets(IEnumerable<CombatEntity> candidates, int max)
         {
-            var list = candidates.Where(c => c != null).Take(max).ToList();
-            foreach (var c in list)
+            var list = new List<ICombatEntity>();
+
+            var valid = candidates.Where(c => c != null).ToList();
+            if (max <= 1)
             {
-                c.GetComponent<TargetIndicator>()?.SetSelected(true);
+                var tcs = new UniTaskCompletionSource<CombatEntity>();
+                void Clicked(CombatEntity c) => tcs.TrySetResult(c);
+
+                foreach (var c in valid)
+                {
+                    c.GetComponent<TargetIndicator>()?.SetSelected(true);
+                    var clickable = c.GetComponent<ClickableTarget>();
+                    if (clickable != null)
+                        clickable.OnClicked += Clicked;
+                }
+
+                var result = await tcs.Task;
+
+                foreach (var c in valid)
+                {
+                    c.GetComponent<TargetIndicator>()?.SetSelected(false);
+                    var clickable = c.GetComponent<ClickableTarget>();
+                    if (clickable != null)
+                        clickable.OnClicked -= Clicked;
+                }
+
+                if (result != null)
+                    list.Add(result);
             }
-            if (highlightTime > 0f)
-                await UniTask.Delay((int)(highlightTime * 1000));
-            foreach (var c in list)
+            else
             {
-                c.GetComponent<TargetIndicator>()?.SetSelected(false);
+                var sel = valid.Take(max).ToList();
+                foreach (var c in sel)
+                    c.GetComponent<TargetIndicator>()?.SetSelected(true);
+                if (highlightTime > 0f)
+                    await UniTask.Delay((int)(highlightTime * 1000));
+                foreach (var c in sel)
+                    c.GetComponent<TargetIndicator>()?.SetSelected(false);
+                list.AddRange(sel);
             }
-            return list.Cast<ICombatEntity>().ToList();
+
+            return list;
         }
     }
 }

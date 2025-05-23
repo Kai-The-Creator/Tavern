@@ -13,6 +13,7 @@ namespace _Core._Combat
     [CreateAssetMenu(fileName = "StatusEffect", menuName = "Combat/Status Effect")]
     public class StatusEffectSO : ScriptableObject
     {
+        public Sprite Icon;
         public StatusType Type;
         public int Value;
         public int Duration;
