@@ -55,55 +55,20 @@ namespace _Core._Combat.Services
 
         public async UniTask StartBattle(System.Threading.CancellationToken token)
         {
+            if (combatants == null || combatants.Count == 0)
+                return;
+
             _current = 0;
-            _state = BattleState.PlayerTurn;
+            _state = DetermineBattleState();
+
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 var entity = combatants[_current];
-                
-                if (!entity.IsAlive)
-                {
-                    _current = (_current + 1) % combatants.Count;
-                    continue;
-                }
-                
-                await entity.OnTurnStart(config);
 
-                var status = entity.GetComponent<StatusController>();
-                if (status != null && status.SkipNextTurn)
-                {
-                    status.SkipNextTurn = false;
-                    _current = (_current + 1) % combatants.Count;
-                    await UniTask.Yield();
-                    continue;
-                }
+                await RunTurn(entity);
 
-                var ability = await entity.SelectAbility();
-                if (ability != null)
-                {
-                    var targets = await SelectTargets(entity, ability);
-                    await AbilityExecutor.Execute(entity, targets, ability);
-                    entity.StartCooldown(ability);
-
-                    if (ability == config.UltimateAbility)
-                    {
-                        entity.Resources.UltimateCharge = 0f;
-                    }
-                    else if (ability is PotionAbilitySO)
-                    {
-                        entity.GetComponent<PotionController>()?.RegisterUse();
-                    }
-                    else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
-                    {
-                        entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
-                    }
-
-                    entity.Resources.Clamp(entity.Stats);
-                }
-
-
-                entity.Resources.Clamp(entity.Stats);
-                RaiseAbilityResolved();
+                _state = DetermineBattleState();
+                _current = (_current + 1) % combatants.Count;
             }
         }
 
