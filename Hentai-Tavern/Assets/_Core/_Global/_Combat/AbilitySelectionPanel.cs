@@ -29,12 +29,6 @@ namespace _Core._Combat
             return await _tcs.Task;
         }
 
-        public void CancelSelection()
-        {
-            _tcs?.TrySetResult(null);
-            ClearButtons();
-        }
-
         private void Select(AbilitySO ability)
         {
             _tcs.TrySetResult(ability);

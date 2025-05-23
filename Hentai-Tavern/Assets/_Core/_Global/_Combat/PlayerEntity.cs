@@ -51,20 +51,5 @@ namespace _Core._Combat
             return _hud != null ? _hud.WaitEndTurn() : UniTask.CompletedTask;
         }
 
-        public void ForceEndTurn()
-        {
-            _hud?.ForceEndTurn();
-        }
-
-        public bool HasUsableAbility()
-        {
-            if (CanUseUltimate())
-                return true;
-            foreach (var a in abilities)
-                if (!IsOnCooldown(a) && CanUse(a))
-                    return true;
-            return false;
-        }
-
     }
 }
