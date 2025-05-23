@@ -47,5 +47,10 @@ namespace _Core._Combat
             abilities = list?.ToArray() ?? System.Array.Empty<AbilitySO>();
         }
 
+        public UniTask WaitEndTurn()
+        {
+            return _hud != null ? _hud.WaitEndTurn() : UniTask.CompletedTask;
+        }
+
     }
 }

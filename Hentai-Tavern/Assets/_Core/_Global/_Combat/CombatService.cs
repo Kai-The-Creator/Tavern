@@ -109,6 +109,11 @@ namespace _Core._Combat.Services
                     RaiseAbilityResolved();
                 }
 
+                if (entity.IsPlayer && entity is PlayerEntity player)
+                {
+                    await player.WaitEndTurn();
+                }
+
                 _state = DetermineBattleState();
 
                 if (ability is PotionAbilitySO)
