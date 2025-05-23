@@ -59,6 +59,7 @@ namespace _Core._Combat.Services
             _state = BattleState.PlayerTurn;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
 <<<<<<< HEAD
@@ -91,6 +92,8 @@ namespace _Core._Combat.Services
             var turnStarted = false;
 =======
 >>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
+=======
+>>>>>>> parent of 678152b (Allow potions without ending turn)
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 var entity = combatants[_current];
@@ -105,6 +108,7 @@ namespace _Core._Combat.Services
                 var status = entity.GetComponent<StatusController>();
                 if (status != null && status.SkipNextTurn)
                 {
+<<<<<<< HEAD
 <<<<<<< HEAD
                     await entity.OnTurnStart(config);
 
@@ -121,11 +125,16 @@ namespace _Core._Combat.Services
                     turnStarted = true;
 >>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
 =======
+=======
+>>>>>>> parent of 678152b (Allow potions without ending turn)
                     status.SkipNextTurn = false;
                     _current = (_current + 1) % combatants.Count;
                     await UniTask.Yield();
                     continue;
+<<<<<<< HEAD
 >>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
+=======
+>>>>>>> parent of 678152b (Allow potions without ending turn)
                 }
 
                 var ability = await entity.SelectAbility();
@@ -155,6 +164,7 @@ namespace _Core._Combat.Services
 <<<<<<< HEAD
 <<<<<<< HEAD
                 _state = DetermineBattleState();
+<<<<<<< HEAD
 =======
                 if (entity.IsPlayer && entity is PlayerEntity player)
                 {
@@ -176,6 +186,8 @@ namespace _Core._Combat.Services
 >>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
 =======
 >>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
+=======
+>>>>>>> parent of 678152b (Allow potions without ending turn)
                 _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
             }
