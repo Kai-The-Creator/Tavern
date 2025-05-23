@@ -58,6 +58,7 @@ namespace _Core._Combat.Services
             _current = 0;
             _state = BattleState.PlayerTurn;
 <<<<<<< HEAD
+<<<<<<< HEAD
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
 <<<<<<< HEAD
@@ -88,18 +89,23 @@ namespace _Core._Combat.Services
                     continue;
 =======
             var turnStarted = false;
+=======
+>>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 var entity = combatants[_current];
                 if (!entity.IsAlive)
                 {
                     _current = (_current + 1) % combatants.Count;
-                    turnStarted = false;
                     continue;
                 }
 
-                if (!turnStarted)
+                await entity.OnTurnStart(config);
+
+                var status = entity.GetComponent<StatusController>();
+                if (status != null && status.SkipNextTurn)
                 {
+<<<<<<< HEAD
                     await entity.OnTurnStart(config);
 
                     var status = entity.GetComponent<StatusController>();
@@ -114,6 +120,12 @@ namespace _Core._Combat.Services
 
                     turnStarted = true;
 >>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
+=======
+                    status.SkipNextTurn = false;
+                    _current = (_current + 1) % combatants.Count;
+                    await UniTask.Yield();
+                    continue;
+>>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
                 }
 
                 var ability = await entity.SelectAbility();
@@ -152,6 +164,7 @@ namespace _Core._Combat.Services
 =======
 >>>>>>> parent of 213c7c4 (Merge pull request #20 from Kai-The-Creator/codex/add-endturnbutton-to-battlehud-and-wait-for-endturn)
                 _state = DetermineBattleState();
+<<<<<<< HEAD
 
                 if (ability is PotionAbilitySO)
                 {
@@ -161,6 +174,8 @@ namespace _Core._Combat.Services
 
                 turnStarted = false;
 >>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
+=======
+>>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
                 _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
             }
