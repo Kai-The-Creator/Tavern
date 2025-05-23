@@ -42,6 +42,7 @@ namespace _Core._Combat.UI
         public AbilitySelectionPanel AbilityPanel => abilityPanel;
 
         private PlayerEntity _player;
+        private PotionController _potionController;
 
         private readonly List<PotionButton> _spawnedPotions = new();
         private readonly Dictionary<CombatEntity, (HealthBar bar, StatusLine line)> _enemyUi = new();
@@ -53,6 +54,12 @@ namespace _Core._Combat.UI
             _combatService = GService.GetService<ICombatService>();
             if (_combatService != null)
                 _combatService.OnAbilityResolved += UpdateBars;
+
+            if (_potionController)
+            {
+                _potionController.OnUsesChanged += UpdatePotionUses;
+                UpdatePotionUses(_potionController.RemainingUses);
+            }
         }
 
         private void OnDisable()
@@ -60,9 +67,8 @@ namespace _Core._Combat.UI
             if (_combatService != null)
                 _combatService.OnAbilityResolved -= UpdateBars;
 
-            var potions = _player?.GetComponent<PotionController>();
-            if (potions)
-                potions.OnUsesChanged -= UpdatePotionUses;
+            if (_potionController)
+                _potionController.OnUsesChanged -= UpdatePotionUses;
 
             ClearEnemies();
         }
@@ -70,6 +76,7 @@ namespace _Core._Combat.UI
         public void BindPlayer(PlayerEntity player)
         {
             _player = player;
+            _potionController = _player ? _player.GetComponent<PotionController>() : null;
             if (playerStatusIndicator)
             {
                 playerStatusIndicator.SetPassives(player.Passives);
@@ -110,7 +117,7 @@ namespace _Core._Combat.UI
             }
 
             ClearPotions();
-            var potions = _player?.GetComponent<PotionController>();
+            var potions = _potionController;
             if (potions && potionButtonPrefab && potionContainer)
             {
                 foreach (var p in potions.ActiveAbilities)
@@ -121,6 +128,7 @@ namespace _Core._Combat.UI
                     btn.Button.onClick.AddListener(() => tcs.TrySetResult(potion));
                     _spawnedPotions.Add(btn);
                 }
+                UpdatePotionUses(potions.RemainingUses);
             }
             // -----------------------------------------------------------------------
 
@@ -140,17 +148,24 @@ namespace _Core._Combat.UI
 
         private void BindPotions()
         {
-            var potions = _player?.GetComponent<PotionController>();
-            if (potions)
+            if (_potionController)
             {
-                potions.OnUsesChanged += UpdatePotionUses;
-                UpdatePotionUses(potions.RemainingUses);
+                _potionController.OnUsesChanged += UpdatePotionUses;
+                UpdatePotionUses(_potionController.RemainingUses);
             }
         }
 
         private void UpdatePotionUses(int count)
         {
-            if (potionUsesLabel) potionUsesLabel.text = count.ToString();
+            if (potionUsesLabel)
+                potionUsesLabel.text = count.ToString();
+
+            var interactable = count > 0;
+            foreach (var btn in _spawnedPotions)
+            {
+                if (btn)
+                    btn.Button.interactable = interactable;
+            }
         }
 
         private void ClearPotions()
