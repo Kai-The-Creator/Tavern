@@ -13,9 +13,15 @@ namespace _Core._Combat
             if (behaviour == null || behaviour.Abilities.Count == 0)
                 return UniTask.FromResult<AbilitySO>(null);
 
-            var ability = behaviour.Abilities[_index];
-            _index = (_index + 1) % behaviour.Abilities.Count;
-            return UniTask.FromResult(ability);
+            for (int i = 0; i < behaviour.Abilities.Count; i++)
+            {
+                var ability = behaviour.Abilities[_index];
+                _index = (_index + 1) % behaviour.Abilities.Count;
+                if (!IsOnCooldown(ability))
+                    return UniTask.FromResult(ability);
+            }
+
+            return UniTask.FromResult<AbilitySO>(null);
         }
     }
 }
