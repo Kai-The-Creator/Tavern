@@ -2265,7 +2265,6 @@ MonoBehaviour:
   manaBar: {fileID: 29586175320219876}
   staminaBar: {fileID: 2021340102705956785}
   abilityPanel: {fileID: 4855239410183320880}
-  potionIndicator: {fileID: 0}
 --- !u!1 &5802993076478575424
 GameObject:
   m_ObjectHideFlags: 0

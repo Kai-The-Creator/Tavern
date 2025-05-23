@@ -103,7 +103,7 @@ namespace _Core.GameEvents.Battle
                 {
                     spawned.Add(player);
                     hud.BindPlayer(player);
-                    player.SetSelectionPanel(hud.AbilityPanel);
+                    player.SetHUD(hud);
                 }
             }
 

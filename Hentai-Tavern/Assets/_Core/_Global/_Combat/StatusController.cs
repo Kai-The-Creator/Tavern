@@ -14,7 +14,8 @@ namespace _Core._Combat
         }
 
         private readonly List<ActiveStatus> _statuses = new();
-        private StatusIndicator _indicator;
+        [SerializeField] private StatusIndicator indicator;
+        public StatusIndicator Indicator => indicator;
 
         /// <summary>
         /// When true, the owning entity should skip its upcoming turn.
@@ -25,7 +26,13 @@ namespace _Core._Combat
 
         private void Awake()
         {
-            _indicator = GetComponent<StatusIndicator>();
+            if (indicator == null)
+                indicator = GetComponent<StatusIndicator>();
+        }
+
+        public void SetIndicator(StatusIndicator newIndicator)
+        {
+            indicator = newIndicator;
         }
 
         public bool IsStunned => _statuses.Any(s => s.Effect.Type == StatusType.Stun);
@@ -52,7 +59,7 @@ namespace _Core._Combat
             {
                 SkipNextTurn = true;
             }
-            _indicator?.AddStatus(effect);
+            indicator?.AddStatus(effect);
         }
 
         public void TickStartTurn(CombatEntity entity)
@@ -79,7 +86,7 @@ namespace _Core._Combat
                 if (s.Remaining <= 0 || (s.Effect.Type == StatusType.Shield && s.ShieldLeft <= 0))
                 {
                     _statuses.RemoveAt(i);
-                    _indicator?.RemoveStatus(s.Effect.Type);
+                    indicator?.RemoveStatus(s.Effect.Type);
                 }
             }
             entity.Resources.Clamp(entity.Stats);
@@ -103,7 +110,7 @@ namespace _Core._Combat
                     _statuses.RemoveAt(i);
             }
             if (!_statuses.Any(s => s.Effect.Type == type))
-                _indicator?.RemoveStatus(type);
+                indicator?.RemoveStatus(type);
         }
     }
 }
