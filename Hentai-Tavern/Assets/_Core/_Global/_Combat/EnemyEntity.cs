@@ -17,7 +17,7 @@ namespace _Core._Combat
             {
                 var ability = behaviour.Abilities[_index];
                 _index = (_index + 1) % behaviour.Abilities.Count;
-                if (!IsOnCooldown(ability))
+                if (!IsOnCooldown(ability) && CanUse(ability))
                     return UniTask.FromResult(ability);
             }
 

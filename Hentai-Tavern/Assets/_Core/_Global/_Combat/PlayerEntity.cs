@@ -28,15 +28,15 @@ namespace _Core._Combat
         {
             var list = new List<AbilitySO>();
             foreach (var a in abilities)
-                if (!IsOnCooldown(a))
+                if (!IsOnCooldown(a) && CanUse(a))
                     list.Add(a);
             if (_config && Resources.UltimateCharge >= 100f && _config.UltimateAbility)
-                if (!IsOnCooldown(_config.UltimateAbility))
+                if (!IsOnCooldown(_config.UltimateAbility) && CanUse(_config.UltimateAbility))
                     list.Add(_config.UltimateAbility);
 
             if (_potionController)
                 foreach (var a in _potionController.ActiveAbilities)
-                    if (!IsOnCooldown(a))
+                    if (!IsOnCooldown(a) && CanUse(a))
                         list.Add(a);
 
             if (_selectionPanel == null || list.Count == 0)

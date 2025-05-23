@@ -69,6 +69,15 @@ namespace _Core._Combat
             return UniTask.CompletedTask;
         }
 
+        public bool CanUse(AbilitySO ability)
+        {
+            if (ability == null)
+                return false;
+
+            return resources.Mana >= ability.CostMana &&
+                   resources.Stamina >= ability.CostStamina;
+        }
+
         public abstract UniTask<AbilitySO> SelectAbility();
     }
 }
