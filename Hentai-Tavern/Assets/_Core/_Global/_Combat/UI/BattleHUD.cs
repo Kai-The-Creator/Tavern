@@ -31,6 +31,9 @@ namespace _Core._Combat.UI
         [SerializeField] private Button ultimateButton;
         [SerializeField] private Slider ultimateSlider;
 
+        [Header("Turn")]
+        [SerializeField] private Button endTurnButton;
+
         [Header("Status")]
         [SerializeField] private StatusIndicator playerStatusIndicator;
 
@@ -48,11 +51,15 @@ namespace _Core._Combat.UI
 
         private ICombatService _combatService;
 
+        public event Action OnEndTurn;
+
         private void OnEnable()
         {
             _combatService = GService.GetService<ICombatService>();
             if (_combatService != null)
                 _combatService.OnAbilityResolved += UpdateBars;
+            if (endTurnButton)
+                endTurnButton.onClick.AddListener(RaiseEndTurn);
         }
 
         private void OnDisable()
@@ -60,11 +67,19 @@ namespace _Core._Combat.UI
             if (_combatService != null)
                 _combatService.OnAbilityResolved -= UpdateBars;
 
+            if (endTurnButton)
+                endTurnButton.onClick.RemoveListener(RaiseEndTurn);
+
             var potions = _player?.GetComponent<PotionController>();
             if (potions)
                 potions.OnUsesChanged -= UpdatePotionUses;
 
             ClearEnemies();
+        }
+
+        private void RaiseEndTurn()
+        {
+            OnEndTurn?.Invoke();
         }
 
         public void BindPlayer(PlayerEntity player)
