@@ -117,6 +117,7 @@ namespace _Core.GameEvents.Battle
                     if (enemy && i < enemyBehaviours.Count && enemyBehaviours[i])
                         enemy.SetBehaviour(enemyBehaviours[i]);
                     spawned.Add(enemy);
+                    hud?.BindEnemy(enemy);
                 }
             }
         }
@@ -126,6 +127,7 @@ namespace _Core.GameEvents.Battle
             foreach (var e in spawned)
                 if (e) Destroy(e.gameObject);
             spawned.Clear();
+            hud?.ClearEnemies();
         }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using _Core._Combat.Services;
+using _Core._Combat; 
 using _Core._Global.Services;
 
 namespace _Core._Combat.UI
@@ -21,9 +22,6 @@ namespace _Core._Combat.UI
         [Header("Panels")]
         [SerializeField] private AbilitySelectionPanel abilityPanel;
 
-        [Header("Status")]
-        [SerializeField] private StatusIndicator statusIndicator;
-
         [Header("Potions")]
         [SerializeField] private PotionButton potionButtonPrefab;
         [SerializeField] private Transform potionContainer;
@@ -33,11 +31,20 @@ namespace _Core._Combat.UI
         [SerializeField] private Button ultimateButton;
         [SerializeField] private Slider ultimateSlider;
 
+        [Header("Status")]
+        [SerializeField] private StatusIndicator playerStatusIndicator;
+
+        [Header("Enemy UI")]
+        [SerializeField] private HealthBar healthBarPrefab;
+        [SerializeField] private StatusLine statusLinePrefab;
+        [SerializeField] private Transform enemyContainer;
+
         public AbilitySelectionPanel AbilityPanel => abilityPanel;
 
         private PlayerEntity _player;
 
         private readonly List<PotionButton> _spawnedPotions = new();
+        private readonly Dictionary<CombatEntity, (HealthBar bar, StatusLine line)> _enemyUi = new();
 
         private ICombatService _combatService;
 
@@ -57,24 +64,20 @@ namespace _Core._Combat.UI
             if (potions)
                 potions.OnUsesChanged -= UpdatePotionUses;
 
-            var controller = _player?.GetComponent<StatusController>();
-            if (controller && controller.Indicator == statusIndicator)
-                controller.SetIndicator(null);
+            ClearEnemies();
         }
 
         public void BindPlayer(PlayerEntity player)
         {
             _player = player;
+            if (playerStatusIndicator)
+            {
+                playerStatusIndicator.SetPassives(player.Passives);
+                player.GetComponent<StatusController>()?.SetIndicator(playerStatusIndicator);
+            }
             UpdateBars();
             UpdateUltimate();
             BindPotions();
-            if (statusIndicator && _player)
-            {
-                var controller = _player.GetComponent<StatusController>();
-                if (controller)
-                    controller.SetIndicator(statusIndicator);
-                statusIndicator.SetPassives(_player.Passives);
-            }
         }
 
         public void UpdateBars()
@@ -147,6 +150,48 @@ namespace _Core._Combat.UI
             foreach (var p in _spawnedPotions)
                 if (p) Destroy(p.gameObject);
             _spawnedPotions.Clear();
+        }
+
+        public void BindEnemy(CombatEntity enemy)
+        {
+            if (enemyContainer == null) return;
+
+            HealthBar bar = null;
+            StatusLine line = null;
+
+            if (healthBarPrefab)
+            {
+                bar = Instantiate(healthBarPrefab, enemyContainer);
+                bar.SetTarget(enemy);
+            }
+
+            if (statusLinePrefab)
+            {
+                line = Instantiate(statusLinePrefab, enemyContainer);
+                line.Bind(enemy);
+            }
+
+            _enemyUi[enemy] = (bar, line);
+        }
+
+        public void UnbindEnemy(CombatEntity enemy)
+        {
+            if (_enemyUi.TryGetValue(enemy, out var ui))
+            {
+                if (ui.bar) Destroy(ui.bar.gameObject);
+                if (ui.line) Destroy(ui.line.gameObject);
+                _enemyUi.Remove(enemy);
+            }
+        }
+
+        public void ClearEnemies()
+        {
+            foreach (var kv in _enemyUi)
+            {
+                if (kv.Value.bar) Destroy(kv.Value.bar.gameObject);
+                if (kv.Value.line) Destroy(kv.Value.line.gameObject);
+            }
+            _enemyUi.Clear();
         }
 
         private void UpdateUltimate()

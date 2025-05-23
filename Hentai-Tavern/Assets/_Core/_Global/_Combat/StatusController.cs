@@ -18,6 +18,16 @@ namespace _Core._Combat
         public StatusIndicator Indicator => indicator;
 
         /// <summary>
+        /// The indicator used to display active statuses.
+        /// </summary>
+        public StatusIndicator Indicator => _indicator;
+
+        /// <summary>
+        /// The indicator used to display active statuses.
+        /// </summary>
+        public StatusIndicator Indicator => _indicator;
+
+        /// <summary>
         /// When true, the owning entity should skip its upcoming turn.
         /// This flag is set when a <see cref="StatusType.Stun"/> is applied
         /// and consumed by <see cref="CombatService"/> after the turn is skipped.
@@ -26,14 +36,18 @@ namespace _Core._Combat
 
         private void Awake()
         {
-            if (indicator == null)
-                indicator = GetComponent<StatusIndicator>();
+            if (_indicator == null)
+                _indicator = GetComponent<StatusIndicator>();
         }
 
-        public void SetIndicator(StatusIndicator newIndicator)
+        /// <summary>
+        /// Sets the indicator used to display statuses.
+        /// </summary>
+        public void SetIndicator(StatusIndicator indicator)
         {
-            indicator = newIndicator;
+            _indicator = indicator;
         }
+
 
         public bool IsStunned => _statuses.Any(s => s.Effect.Type == StatusType.Stun);
 

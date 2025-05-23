@@ -3,39 +3,41 @@ using UnityEngine;
 namespace _Core._Combat.UI
 {
     /// <summary>
-    /// Spawns a StatusIndicator prefab on a screen-space canvas and tracks the
-    /// owning combat entity.
+    /// Follows a combat entity and displays its status effects.
     /// </summary>
-    [RequireComponent(typeof(CombatEntity))]
     public class StatusLine : MonoBehaviour
     {
-        [SerializeField] private StatusIndicator indicatorPrefab;
-        [SerializeField] private Canvas targetCanvas;
+        [SerializeField] private StatusIndicator indicator;
         [SerializeField] private Vector3 worldOffset = Vector3.up * 2.5f;
 
-        private CombatEntity _entity;
-        private StatusIndicator _indicator;
+        private CombatEntity _target;
         private Camera _camera;
 
-        private void Awake()
+        public StatusIndicator Indicator => indicator;
+
+        /// <summary>
+        /// Assigns the entity this status line should follow.
+        /// </summary>
+        public void Bind(CombatEntity target)
         {
-            _entity = GetComponent<CombatEntity>();
+            _target = target;
             _camera = Camera.main;
-            if (indicatorPrefab != null && targetCanvas != null)
+            if (indicator == null)
+                indicator = GetComponentInChildren<StatusIndicator>();
+
+            if (_target != null)
             {
-                _indicator = Instantiate(indicatorPrefab, targetCanvas.transform);
-                _indicator.SetPassives(_entity.Passives);
-                var controller = _entity.GetComponent<StatusController>();
-                if (controller != null)
-                    controller.SetIndicator(_indicator);
+                var ctrl = _target.GetComponent<StatusController>();
+                if (ctrl != null)
+                    ctrl.SetIndicator(indicator);
+                indicator?.SetPassives(_target.Passives);
             }
         }
 
         private void LateUpdate()
         {
-            if (_indicator == null || _entity == null || _camera == null) return;
-            var pos = _camera.WorldToScreenPoint(_entity.transform.position + worldOffset);
-            _indicator.transform.position = pos;
+            if (_target == null || _camera == null) return;
+            transform.position = _camera.WorldToScreenPoint(_target.transform.position + worldOffset);
         }
     }
 }
