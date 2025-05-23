@@ -7,6 +7,7 @@ namespace _Core._Combat
     {
         string Id { get; }
         bool IsPlayer { get; }
+        bool IsAlive { get; }
         StatBlock Stats { get; }
         ResourcePool Resources { get; }
         UniTask OnTurnStart(BattleConfig config);
@@ -27,6 +28,7 @@ namespace _Core._Combat
 
         public string Id => id;
         public bool IsPlayer => isPlayer;
+        public bool IsAlive => resources.Health > 0;
         public StatBlock Stats => stats;
         public ResourcePool Resources => resources;
         public Transform Transform => transform;
