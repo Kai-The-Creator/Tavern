@@ -89,10 +89,12 @@ namespace _Core._Combat.UI
             UpdateUltimate();
         }
 
-        public async UniTask<AbilitySO> ChooseAbility(IReadOnlyList<AbilitySO> abilities, Func<AbilitySO, int> cooldown)
+        public async UniTask<AbilitySO> ChooseAbility(IReadOnlyList<AbilitySO> abilities,
+            Func<AbilitySO, int> cooldown)
         {
             var tcs = new UniTaskCompletionSource<AbilitySO>();
 
+            // --- UI-настройка -------------------------------------------------------
             if (ultimateButton)
             {
                 ultimateButton.onClick.RemoveAllListeners();
@@ -120,25 +122,20 @@ namespace _Core._Combat.UI
                     _spawnedPotions.Add(btn);
                 }
             }
+            // -----------------------------------------------------------------------
 
             var abilityTask = abilityPanel.ChooseAbility(abilities, cooldown);
-            var index = await UniTask.WhenAny(abilityTask, tcs.Task);
 
+            // ждём, кто завершится первым
+            var (winnerIndex, abilityResult, tcsResult) =
+                await UniTask.WhenAny(abilityTask, tcs.Task);
+
+            // housekeeping
             if (ultimateButton) ultimateButton.onClick.RemoveAllListeners();
             ClearPotions();
 
-<<<<<<< HEAD
-            return index == 0 ? await abilityTask : await tcs.Task;
-=======
-            // housekeeping
-                        if (ultimateButton != null)
-                            ultimateButton.onClick.RemoveAllListeners();
-                        ClearPotions();
-
-            // abilityResult содержит результат abilityTask,
-            // tcsResult   – результат tcs.Task
+            // возвращаем выбранную способность
             return winnerIndex == 0 ? abilityResult : tcsResult;
->>>>>>> parent of c741272 (Add end turn button and waiting)
         }
 
         private void BindPotions()

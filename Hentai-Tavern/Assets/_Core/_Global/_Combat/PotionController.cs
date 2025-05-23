@@ -19,7 +19,7 @@ namespace _Core._Combat
         public IReadOnlyList<AbilitySO> ActiveAbilities =>
             potions
                 .Where(p => (_items == null || (_items.IsUnlocked(p.Config))) &&
-                              _usedThisTurn < (_config ? _config.PotionsPerTurn : 0))
+                            _usedThisTurn < (_config ? _config.PotionsPerTurn : 0))
                 .Cast<AbilitySO>()
                 .ToList();
 

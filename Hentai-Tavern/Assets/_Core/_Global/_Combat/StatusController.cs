@@ -14,13 +14,7 @@ namespace _Core._Combat
         }
 
         private readonly List<ActiveStatus> _statuses = new();
-        [SerializeField] private StatusIndicator indicator;
-        public StatusIndicator Indicator => indicator;
-
-        /// <summary>
-        /// The indicator used to display active statuses.
-        /// </summary>
-        public StatusIndicator Indicator => _indicator;
+        private StatusIndicator _indicator;
 
         /// <summary>
         /// The indicator used to display active statuses.
@@ -48,9 +42,7 @@ namespace _Core._Combat
             _indicator = indicator;
         }
 
-
         public bool IsStunned => _statuses.Any(s => s.Effect.Type == StatusType.Stun);
-
         public void Apply(StatusEffectSO effect)
         {
             var existing = _statuses.FirstOrDefault(s => s.Effect.Type == effect.Type);
@@ -73,7 +65,7 @@ namespace _Core._Combat
             {
                 SkipNextTurn = true;
             }
-            indicator?.AddStatus(effect);
+            _indicator?.AddStatus(effect);
         }
 
         public void TickStartTurn(CombatEntity entity)
@@ -100,7 +92,7 @@ namespace _Core._Combat
                 if (s.Remaining <= 0 || (s.Effect.Type == StatusType.Shield && s.ShieldLeft <= 0))
                 {
                     _statuses.RemoveAt(i);
-                    indicator?.RemoveStatus(s.Effect.Type);
+                    _indicator?.RemoveStatus(s.Effect.Type);
                 }
             }
             entity.Resources.Clamp(entity.Stats);
@@ -123,8 +115,8 @@ namespace _Core._Combat
                 if (_statuses[i].Effect.Type == type)
                     _statuses.RemoveAt(i);
             }
-            if (!_statuses.Any(s => s.Effect.Type == type))
-                indicator?.RemoveStatus(type);
+            if (_statuses.All(s => s.Effect.Type != type))
+                _indicator?.RemoveStatus(type);
         }
     }
 }
