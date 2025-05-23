@@ -71,9 +71,6 @@ namespace _Core._Combat.Services
                     {
                         entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
                     }
-                        entity.Resources.UltimateCharge = 0f;
-                    else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
-                        entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
 
                     entity.Resources.Clamp(entity.Stats);
                 }

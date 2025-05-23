@@ -12,7 +12,6 @@ namespace _Core._Combat
             if (ability == null) return;
 
             if (source is CombatEntity src && ability is not PotionAbilitySO)
-            if (source is CombatEntity src)
             {
                 src.Resources.Mana -= ability.CostMana;
                 src.Resources.Stamina -= ability.CostStamina;
