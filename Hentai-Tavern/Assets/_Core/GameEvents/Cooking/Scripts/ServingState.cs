@@ -3,7 +3,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using _Core.GameEvents.Cooking.Scripts.HUD;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace _Core.GameEvents.Cooking.Scripts.States
