@@ -54,11 +54,20 @@ namespace _Core._Combat.Services
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 var entity = combatants[_current];
-                await entity.OnTurnStart(config);
-
-                if (entity.GetComponent<StatusController>()?.IsStunned == true)
+                if (!entity.IsAlive)
                 {
                     _current = (_current + 1) % combatants.Count;
+                    continue;
+                }
+
+                await entity.OnTurnStart(config);
+
+                var status = entity.GetComponent<StatusController>();
+                if (status != null && status.SkipNextTurn)
+                {
+                    status.SkipNextTurn = false;
+                    _current = (_current + 1) % combatants.Count;
+                    await UniTask.Yield();
                     continue;
                 }
 
@@ -121,8 +130,8 @@ namespace _Core._Combat.Services
 
         private BattleState DetermineBattleState()
         {
-            bool playerAlive = combatants.Any(c => c.IsPlayer && c.Resources.Health > 0);
-            bool enemiesAlive = combatants.Any(c => !c.IsPlayer && c.Resources.Health > 0);
+            bool playerAlive = combatants.Any(c => c.IsPlayer && c.IsAlive);
+            bool enemiesAlive = combatants.Any(c => !c.IsPlayer && c.IsAlive);
 
             if (!playerAlive)
                 return BattleState.Defeat;

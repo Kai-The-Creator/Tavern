@@ -16,6 +16,13 @@ namespace _Core._Combat
         private readonly List<ActiveStatus> _statuses = new();
         private StatusIndicator _indicator;
 
+        /// <summary>
+        /// When true, the owning entity should skip its upcoming turn.
+        /// This flag is set when a <see cref="StatusType.Stun"/> is applied
+        /// and consumed by <see cref="CombatService"/> after the turn is skipped.
+        /// </summary>
+        public bool SkipNextTurn { get; set; }
+
         private void Awake()
         {
             _indicator = GetComponent<StatusIndicator>();
@@ -41,6 +48,10 @@ namespace _Core._Combat
                     ShieldLeft = effect.Value
                 });
             }
+            if (effect.Type == StatusType.Stun)
+            {
+                SkipNextTurn = true;
+            }
             _indicator?.SetStatus(effect.Type, true);
         }
 
@@ -58,7 +69,9 @@ namespace _Core._Combat
                         entity.Resources.Health += s.Effect.Value;
                         break;
                     case StatusType.Stun:
-                        // just consume duration
+                        // Stun effects simply reduce their duration here.
+                        // SkipNextTurn is handled separately until the combat
+                        // loop consumes it.
                         break;
                 }
 
