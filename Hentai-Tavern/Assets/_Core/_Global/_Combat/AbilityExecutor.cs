@@ -75,6 +75,18 @@ namespace _Core._Combat
                         target.Resources.Health -= physical;
                     if (magical > 0)
                         target.Resources.Mana -= magical;
+
+                    var applyStatuses = effect.AppliedStatuses;
+                    if (applyStatuses != null && applyStatuses.Length > 0)
+                    {
+                        var status = target.GetComponent<StatusController>();
+                        if (status)
+                        {
+                            foreach (var s in applyStatuses)
+                                if (s != null)
+                                    status.Apply(s);
+                        }
+                    }
                 }
 
                 if (heal > 0)
