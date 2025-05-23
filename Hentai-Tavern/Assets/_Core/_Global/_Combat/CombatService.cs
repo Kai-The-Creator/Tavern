@@ -60,6 +60,7 @@ namespace _Core._Combat.Services
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
 <<<<<<< HEAD
@@ -74,6 +75,12 @@ namespace _Core._Combat.Services
                 var enemies = combatants.Where(c => !c.IsPlayer && c.IsAlive).ToList();
                 foreach (var enemy in enemies)
 >>>>>>> parent of b7135a8 (Revert "Add wait for end of player turn before enemy actions")
+=======
+            while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
+            {
+                var entity = combatants[_current];
+                if (!entity.IsAlive)
+>>>>>>> parent of f5ba74c (Refactor CombatService turn loop)
                 {
                     _current = (_current + 1) % combatants.Count;
                     continue;
@@ -88,6 +95,7 @@ namespace _Core._Combat.Services
                     _current = (_current + 1) % combatants.Count;
                     await UniTask.Yield();
                     continue;
+<<<<<<< HEAD
 =======
             var turnStarted = false;
 =======
@@ -135,6 +143,8 @@ namespace _Core._Combat.Services
 >>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
 =======
 >>>>>>> parent of 678152b (Allow potions without ending turn)
+=======
+>>>>>>> parent of f5ba74c (Refactor CombatService turn loop)
                 }
 
                 var ability = await entity.SelectAbility();
@@ -161,6 +171,7 @@ namespace _Core._Combat.Services
                     RaiseAbilityResolved();
                 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -191,11 +202,15 @@ namespace _Core._Combat.Services
 >>>>>>> parent of 69bdacb (Merge pull request #22 from Kai-The-Creator/codex/detect-potionabilityso-and-execute-in-startbattle)
 =======
 >>>>>>> parent of 678152b (Allow potions without ending turn)
+=======
+                _state = DetermineBattleState();
+>>>>>>> parent of f5ba74c (Refactor CombatService turn loop)
                 _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
             }
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         private async UniTask RunTurn(CombatEntity entity)
@@ -242,6 +257,8 @@ namespace _Core._Combat.Services
 >>>>>>> parent of f5ba74c (Refactor CombatService turn loop)
 =======
 >>>>>>> parent of e64e7ae (Merge pull request #19 from Kai-The-Creator/codex/update-turn-loop-in-combatservice)
+=======
+>>>>>>> parent of f5ba74c (Refactor CombatService turn loop)
         private async UniTask<IReadOnlyList<ICombatEntity>> SelectTargets(CombatEntity source, AbilitySO ability)
         {
             switch (ability.Target)
