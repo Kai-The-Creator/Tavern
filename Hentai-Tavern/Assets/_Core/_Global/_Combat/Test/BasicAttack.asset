@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e21e9b73529340cb8ec19df9e150c08d, type: 3}
   m_Name: BasicAttack
   m_EditorClassIdentifier: 
+  Icon: {fileID: 21300000, guid: c5f379770ddf3470cab5328d5615bb23, type: 3}
   PhysicalDamage: 10
   MagicalDamage: 0
-  CostMana: 0
-  CostStamina: 0
-  Cooldown: 0
+  CostMana: 15
+  CostStamina: 15
+  Cooldown: 3
   MaxTargets: 1
+  Effects: []
   Target: 1

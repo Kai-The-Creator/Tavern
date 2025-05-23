@@ -22,9 +22,9 @@ namespace _Core._Combat
         [SerializeField] private StatBlock stats = new StatBlock();
         [SerializeField] private ResourcePool resources = new ResourcePool();
         [SerializeField] private PassiveAbilitySO[] passives;
-        private StatusController _statusController;
-        private PotionController _potionController;
-        private AbilityCooldownController _cooldownController;
+        protected StatusController _statusController;
+        protected PotionController _potionController;
+        protected AbilityCooldownController _cooldownController;
 
         public string Id => id;
         public bool IsPlayer => isPlayer;

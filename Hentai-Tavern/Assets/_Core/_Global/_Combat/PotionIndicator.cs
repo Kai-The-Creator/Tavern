@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ namespace _Core._Combat
     /// </summary>
     public class PotionIndicator : MonoBehaviour
     {
-        [SerializeField] private Text text;
+        [SerializeField] private TextMeshProUGUI text;
         private PotionController _controller;
 
         private void Awake()
@@ -22,6 +23,7 @@ namespace _Core._Combat
             if (_controller != null && text != null)
             {
                 text.text = _controller.RemainingUses.ToString();
+                Debug.Log(_controller.RemainingUses.ToString());
             }
         }
     }

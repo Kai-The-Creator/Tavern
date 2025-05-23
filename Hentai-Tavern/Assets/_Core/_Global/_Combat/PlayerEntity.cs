@@ -10,13 +10,6 @@ namespace _Core._Combat
         [SerializeField] private AbilitySO[] abilities;
         private AbilitySelectionPanel _selectionPanel;
         private BattleConfig _config;
-        private PotionController _potionController;
-
-        protected override void Awake()
-        {
-            base.Awake();
-            _potionController = GetComponent<PotionController>();
-        }
 
         public override UniTask OnTurnStart(BattleConfig config)
         {

@@ -20,7 +20,7 @@ namespace _Core.GameEvents.Battle
         [SerializeField] private CombatEntity playerPrefab;
         [SerializeField] private List<CombatEntity> enemyPrefabs = new();
         [SerializeField] private List<BehaviourPatternSO> enemyBehaviours = new();
-        [SerializeField] private UI.BattleHUD hudPrefab;
+        [SerializeField] private BattleHUD hud;
 
         [Header("Spawn points")]
         [SerializeField] private Transform playerSpawn;
@@ -56,13 +56,11 @@ namespace _Core.GameEvents.Battle
 
             await combat.StartBattle(battleCts.Token);
 
-            ClearCombatants();
-            IsPaused = true;
-            await UniTask.CompletedTask;
+            await StopGame();
         }
         
         public UniTask CameraToStart(CancellationToken t) =>
-            cameraPosition ? cameraService.MoveCamera(cameraPosition, 1f, t, "DefaulTween") : UniTask.CompletedTask;
+            cameraPosition ? cameraService.MoveCamera(cameraPosition, 1f, t, "DefaultTween") : UniTask.CompletedTask;
 
         public UniTask PauseGame()
         {
@@ -82,7 +80,14 @@ namespace _Core.GameEvents.Battle
             battleCts.Cancel();
             ClearCombatants();
             IsGameActive = false;
+            
             await UniTask.Yield();
+
+            var evtManager = GService.GetService<EventsService>();
+            if (evtManager && evtManager.IsEventPlaying)
+            {
+                evtManager.CompleteCurrentEvent();
+            }
         }
 
         public UniTask RestartGame() => StopGame().ContinueWith(StartGame);
@@ -97,12 +102,8 @@ namespace _Core.GameEvents.Battle
                 if (player != null)
                 {
                     spawned.Add(player);
-                    if (hudPrefab)
-                    {
-                        var hud = Instantiate(hudPrefab);
-                        hud.BindPlayer(player);
-                        player.SetSelectionPanel(hud.AbilityPanel);
-                    }
+                    hud.BindPlayer(player);
+                    player.SetSelectionPanel(hud.AbilityPanel);
                 }
             }
 
@@ -125,9 +126,6 @@ namespace _Core.GameEvents.Battle
             foreach (var e in spawned)
                 if (e) Destroy(e.gameObject);
             spawned.Clear();
-            var hud = FindObjectOfType<UI.BattleHUD>();
-            if (hud)
-                Destroy(hud.gameObject);
         }
     }
 }

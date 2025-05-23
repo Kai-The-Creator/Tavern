@@ -1,6 +1,7 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace _Core._Combat
@@ -77,16 +78,16 @@ namespace _Core._Combat
                         target.Resources.Mana -= magical;
 
                     var applyStatuses = effect.AppliedStatuses;
-                    if (applyStatuses != null && applyStatuses.Length > 0)
-                    {
-                        var status = target.GetComponent<StatusController>();
-                        if (status)
-                        {
-                            foreach (var s in applyStatuses)
-                                if (s != null)
-                                    status.Apply(s);
-                        }
-                    }
+                    // if (applyStatuses != null && applyStatuses.Length > 0)
+                    // {
+                    //     var status = target.GetComponent<StatusController>();
+                    //     if (status)
+                    //     {
+                    //         foreach (var s in applyStatuses)
+                    //             if (s != null)
+                    //                 status.Apply(s);
+                    //     }
+                    // }
                 }
 
                 if (heal > 0)
