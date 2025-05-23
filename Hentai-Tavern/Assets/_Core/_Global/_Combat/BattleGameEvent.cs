@@ -14,6 +14,7 @@ namespace _Core.GameEvents.Battle
         protected override void Activate()
         {
             base.Activate();
+            Debug.Log("Battle Game Event Activated");
             battleRoot.SetActive(true);
             GService.GetService<IUIService>().CloseAllWindows();
 
@@ -23,6 +24,7 @@ namespace _Core.GameEvents.Battle
 
         protected override async void Deactivate()
         {
+            Debug.Log("Battle Game Event DeActivated");
             battleRoot.SetActive(false);
             await GService.GetService<ICameraService>().MoveCameraToStartPosition();
             GService.GetService<IUIService>().ShowWindow(WindowType.Widget);

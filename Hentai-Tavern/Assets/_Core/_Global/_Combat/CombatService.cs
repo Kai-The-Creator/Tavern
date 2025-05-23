@@ -3,6 +3,8 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using _Core._Global.Services;
 using _Core._Combat;
+using _Core._Global.CameraService;
+using _Core._Global.Equip;
 using UnityEngine;
 
 namespace _Core._Combat.Services
@@ -17,7 +19,14 @@ namespace _Core._Combat.Services
         Defeat
     }
 
-    public class CombatService : AService
+    public interface ICombatService : IService
+    {
+        public void Configure(BattleConfig cfg, IList<CombatEntity> list);
+        public UniTask StartBattle(System.Threading.CancellationToken token);
+    }
+
+    [DependsOn(typeof(ICameraService), typeof(IEquipService))]
+    public class CombatService : AService, ICombatService
     {
         [SerializeField] private BattleConfig config;
         [SerializeField] private List<CombatEntity> combatants;

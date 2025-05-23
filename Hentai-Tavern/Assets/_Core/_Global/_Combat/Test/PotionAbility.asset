@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29927b47a1a84e3cbbe8329956b87386, type: 3}
+  m_Name: PotionAbility
+  m_EditorClassIdentifier: 
+  PhysicalDamage: 0
+  MagicalDamage: 0
+  CostMana: 0
+  CostStamina: 0
+  Cooldown: 0
+  MaxTargets: 1
+  Target: 0
+  Config: {fileID: 11400000, guid: f38c4100279a9eb42862e32315ac9c34, type: 2}
+  HealAmount: 10
+  ManaAmount: 0
+  StaminaAmount: 0
+  RemoveStatuses: 00000000

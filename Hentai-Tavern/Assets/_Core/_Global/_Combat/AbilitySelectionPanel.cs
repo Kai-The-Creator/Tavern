@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +23,7 @@ namespace _Core._Combat
             {
                 var btn = Instantiate(abilityButtonPrefab, container);
                 var cd = cooldownProvider?.Invoke(ability) ?? 0;
-                btn.GetComponentInChildren<Text>().text = cd > 0 ? $"{ability.name} ({cd})" : ability.name;
+                btn.GetComponentInChildren<TextMeshProUGUI>().text = cd > 0 ? $"{ability.name} ({cd})" : ability.name;
                 btn.interactable = cd <= 0;
                 btn.onClick.AddListener(() => Select(ability));
                 _spawned.Add(btn);

@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using _Core._Combat;
 using _Core._Combat.Services;
+using _Core._Global.CameraService;
 using _Core._Global.Services;
 using _Core.GameEvents;
 
@@ -11,8 +12,8 @@ namespace _Core.GameEvents.Battle
 {
     public sealed class BattleGameManager : MonoBehaviour, IMiniGameManager
     {
-        [Header("Config")] [SerializeField]
-        private BattleConfig config;
+        [Header("Config")] 
+        [SerializeField] private BattleConfig config;
 
         [Header("Prefabs")]
         [SerializeField] private CombatEntity playerPrefab;
@@ -23,10 +24,13 @@ namespace _Core.GameEvents.Battle
         [Header("Spawn points")]
         [SerializeField] private Transform playerSpawn;
         [SerializeField] private List<Transform> enemySpawns = new();
-
+        [SerializeField] private Transform cameraPosition;
+        
         private readonly List<CombatEntity> spawned = new();
         private AbilitySelectionPanel activePanel;
-        private CombatService combat;
+        
+        private ICameraService cameraService;
+        private ICombatService combat;
         private CancellationTokenSource battleCts;
 
         public bool IsGameActive { get; private set; }
@@ -34,7 +38,8 @@ namespace _Core.GameEvents.Battle
 
         private void Awake()
         {
-            combat = GService.GetService<CombatService>();
+            cameraService = GService.GetService<ICameraService>();
+            combat = GService.GetService<ICombatService>();
         }
 
         public async UniTask StartGame()
@@ -45,15 +50,24 @@ namespace _Core.GameEvents.Battle
 
             battleCts = new CancellationTokenSource();
 
+            await CameraToStart(battleCts.Token);
+            
             SpawnCombatants();
             combat.Configure(config, spawned);
 
             await combat.StartBattle(battleCts.Token);
 
             ClearCombatants();
-@@ -56,45 +59,67 @@ namespace _Core.GameEvents.Battle
             IsPaused = true;
-            return UniTask.CompletedTask;
+            await UniTask.CompletedTask;
+        }
+        
+        public UniTask CameraToStart(CancellationToken t) =>
+            cameraPosition ? cameraService.MoveCamera(cameraPosition, 1f, t, "DefaulTween") : UniTask.CompletedTask;
+
+        public UniTask PauseGame()
+        {
+            throw new System.NotImplementedException();
         }
 
         public UniTask ResumeGame()
