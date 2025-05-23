@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using _Core._Combat;
+using _Core._Combat.UI;
 using _Core._Combat.Services;
 using _Core._Global.Services;
 using _Core.GameEvents;
@@ -16,6 +17,7 @@ namespace _Core.GameEvents.Battle
 
         [Header("Prefabs")]
         [SerializeField] private CombatEntity playerPrefab;
+        [SerializeField] private UI.BattleHUD hudPrefab;
         [SerializeField] private List<CombatEntity> enemyPrefabs = new();
 
         [Header("Spawn points")]
@@ -23,6 +25,7 @@ namespace _Core.GameEvents.Battle
         [SerializeField] private List<Transform> enemySpawns = new();
 
         private readonly List<CombatEntity> spawned = new();
+        private UI.BattleHUD hudInstance;
         private CombatService combat;
         private CancellationTokenSource battleCts;
 
@@ -42,12 +45,16 @@ namespace _Core.GameEvents.Battle
 
             battleCts = new CancellationTokenSource();
 
+            if (hudPrefab)
+                hudInstance = Instantiate(hudPrefab);
             SpawnCombatants();
             combat.Configure(config, spawned);
 
             await combat.StartBattle(battleCts.Token);
 
             ClearCombatants();
+            if (hudInstance)
+                Destroy(hudInstance.gameObject);
             IsGameActive = false;
         }
 
@@ -79,7 +86,14 @@ namespace _Core.GameEvents.Battle
         {
             ClearCombatants();
             if (playerPrefab && playerSpawn)
-                spawned.Add(Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation));
+            {
+                var p = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation);
+                if (hudInstance && p is PlayerEntity player)
+                {
+                    player.Hud = hudInstance;
+                }
+                spawned.Add(p);
+            }
 
             for (int i = 0; i < enemyPrefabs.Count && i < enemySpawns.Count; i++)
             {
@@ -95,6 +109,7 @@ namespace _Core.GameEvents.Battle
             foreach (var e in spawned)
                 if (e) Destroy(e.gameObject);
             spawned.Clear();
+            hudInstance = null;
         }
     }
 }

@@ -23,6 +23,7 @@ namespace _Core._Combat
         [SerializeField] private PassiveAbilitySO[] passives;
         private StatusController _statusController;
         private PotionController _potionController;
+        private AbilityCooldownController _cooldownController;
 
         public string Id => id;
         public bool IsPlayer => isPlayer;
@@ -30,6 +31,11 @@ namespace _Core._Combat
         public ResourcePool Resources => resources;
         public Transform Transform => transform;
         public PassiveAbilitySO[] Passives => passives;
+        public AbilityCooldownController Cooldowns => _cooldownController;
+
+        public int GetCooldown(AbilitySO ability) => _cooldownController ? _cooldownController.GetRemaining(ability) : 0;
+        public bool IsOnCooldown(AbilitySO ability) => _cooldownController && _cooldownController.IsOnCooldown(ability);
+        public void StartCooldown(AbilitySO ability) => _cooldownController?.StartCooldown(ability);
 
         protected virtual void Awake()
         {
@@ -38,6 +44,7 @@ namespace _Core._Combat
             resources.Stamina = stats.MaxStamina;
             _statusController = GetComponent<StatusController>();
             _potionController = GetComponent<PotionController>();
+            _cooldownController = GetComponent<AbilityCooldownController>();
         }
 
         public virtual UniTask OnTurnStart(BattleConfig config)
@@ -47,6 +54,7 @@ namespace _Core._Combat
             resources.Clamp(stats);
 
             _statusController?.TickStartTurn(this);
+            _cooldownController?.Tick();
 
             if (passives != null)
             {
