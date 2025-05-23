@@ -57,24 +57,32 @@ namespace _Core._Combat.Services
         {
             _current = 0;
             _state = BattleState.PlayerTurn;
+            var turnStarted = false;
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 var entity = combatants[_current];
                 if (!entity.IsAlive)
                 {
                     _current = (_current + 1) % combatants.Count;
+                    turnStarted = false;
                     continue;
                 }
 
-                await entity.OnTurnStart(config);
-
-                var status = entity.GetComponent<StatusController>();
-                if (status != null && status.SkipNextTurn)
+                if (!turnStarted)
                 {
-                    status.SkipNextTurn = false;
-                    _current = (_current + 1) % combatants.Count;
-                    await UniTask.Yield();
-                    continue;
+                    await entity.OnTurnStart(config);
+
+                    var status = entity.GetComponent<StatusController>();
+                    if (status != null && status.SkipNextTurn)
+                    {
+                        status.SkipNextTurn = false;
+                        _current = (_current + 1) % combatants.Count;
+                        turnStarted = false;
+                        await UniTask.Yield();
+                        continue;
+                    }
+
+                    turnStarted = true;
                 }
 
                 var ability = await entity.SelectAbility();
@@ -102,6 +110,14 @@ namespace _Core._Combat.Services
                 }
 
                 _state = DetermineBattleState();
+
+                if (ability is PotionAbilitySO)
+                {
+                    await UniTask.Yield();
+                    continue;
+                }
+
+                turnStarted = false;
                 _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
             }
