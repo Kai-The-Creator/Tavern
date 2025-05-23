@@ -14,6 +14,7 @@ namespace _Core._Combat
     {
         public int PhysicalDamage;
         public int MagicalDamage;
+        public StatusEffectSO StatusEffect;
     }
 
     [CreateAssetMenu(fileName = "Ability", menuName = "Combat/Ability")]
