@@ -54,6 +54,12 @@ namespace _Core._Combat.Services
             while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 var entity = combatants[_current];
+                if (!entity.IsAlive)
+                {
+                    _current = (_current + 1) % combatants.Count;
+                    continue;
+                }
+
                 await entity.OnTurnStart(config);
 
                 var status = entity.GetComponent<StatusController>();
@@ -101,7 +107,7 @@ namespace _Core._Combat.Services
                 case TargetSelector.Self:
                     return new ICombatEntity[] { source };
                 case TargetSelector.SingleEnemy:
-                    var enemies = combatants.Where(c => c.IsPlayer != source.IsPlayer).ToList();
+                    var enemies = combatants.Where(c => c.IsPlayer != source.IsPlayer && c.IsAlive).ToList();
                     if (source.IsPlayer && ability.MaxTargets > 1)
                     {
                         var selector = source.GetComponent<TargetSelectionController>();
@@ -111,7 +117,7 @@ namespace _Core._Combat.Services
                     var enemy = enemies.FirstOrDefault();
                     return enemy != null ? new ICombatEntity[] { enemy } : new ICombatEntity[] { source };
                 case TargetSelector.AllEnemies:
-                    return combatants.Where(c => c.IsPlayer != source.IsPlayer).Cast<ICombatEntity>().ToList();
+                    return combatants.Where(c => c.IsPlayer != source.IsPlayer && c.IsAlive).Cast<ICombatEntity>().ToList();
                 default:
                     return new ICombatEntity[] { source };
             }
@@ -119,8 +125,8 @@ namespace _Core._Combat.Services
 
         private BattleState DetermineBattleState()
         {
-            bool playerAlive = combatants.Any(c => c.IsPlayer && c.Resources.Health > 0);
-            bool enemiesAlive = combatants.Any(c => !c.IsPlayer && c.Resources.Health > 0);
+            bool playerAlive = combatants.Any(c => c.IsPlayer && c.IsAlive);
+            bool enemiesAlive = combatants.Any(c => !c.IsPlayer && c.IsAlive);
 
             if (!playerAlive)
                 return BattleState.Defeat;
