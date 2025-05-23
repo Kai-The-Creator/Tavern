@@ -163,6 +163,7 @@ namespace _Core._Combat.Services
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 _state = DetermineBattleState();
 <<<<<<< HEAD
 =======
@@ -173,6 +174,8 @@ namespace _Core._Combat.Services
 
 =======
 >>>>>>> parent of 213c7c4 (Merge pull request #20 from Kai-The-Creator/codex/add-endturnbutton-to-battlehud-and-wait-for-endturn)
+=======
+>>>>>>> parent of c741272 (Add end turn button and waiting)
                 _state = DetermineBattleState();
 <<<<<<< HEAD
 

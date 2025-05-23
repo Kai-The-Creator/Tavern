@@ -127,7 +127,18 @@ namespace _Core._Combat.UI
             if (ultimateButton) ultimateButton.onClick.RemoveAllListeners();
             ClearPotions();
 
+<<<<<<< HEAD
             return index == 0 ? await abilityTask : await tcs.Task;
+=======
+            // housekeeping
+                        if (ultimateButton != null)
+                            ultimateButton.onClick.RemoveAllListeners();
+                        ClearPotions();
+
+            // abilityResult содержит результат abilityTask,
+            // tcsResult   – результат tcs.Task
+            return winnerIndex == 0 ? abilityResult : tcsResult;
+>>>>>>> parent of c741272 (Add end turn button and waiting)
         }
 
         private void BindPotions()
