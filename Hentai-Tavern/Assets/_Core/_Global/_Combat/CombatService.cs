@@ -23,6 +23,7 @@ namespace _Core._Combat.Services
 
         private int _current;
         private BattleState _state;
+        public BattleState State => _state;
 
         public override async UniTask OnStart()
         {
@@ -30,22 +31,42 @@ namespace _Core._Combat.Services
             await UniTask.Yield();
         }
 
-        public async UniTask StartBattle()
+        public void Configure(BattleConfig cfg, IList<CombatEntity> list)
+        {
+            config = cfg;
+            combatants = list.ToList();
+        }
+
+        public async UniTask StartBattle(System.Threading.CancellationToken token)
         {
             _current = 0;
             _state = BattleState.PlayerTurn;
-            while (_state != BattleState.Victory && _state != BattleState.Defeat)
+            while (_state != BattleState.Victory && _state != BattleState.Defeat && !token.IsCancellationRequested)
             {
                 var entity = combatants[_current];
                 await entity.OnTurnStart(config);
 
+                if (entity.GetComponent<StatusController>()?.IsStunned == true)
+                {
+                    _current = (_current + 1) % combatants.Count;
+                    continue;
+                }
+
                 var ability = await entity.SelectAbility();
                 if (ability != null)
                 {
-                    var targets = SelectTargets(entity, ability);
+                    var targets = SelectTargets(entity, ability).ToList();
                     await AbilityExecutor.Execute(entity, targets, ability);
+
+                    if (ability == config.UltimateAbility)
+                        entity.Resources.UltimateCharge = 0f;
+                    else if (ability.PhysicalDamage > 0 || ability.MagicalDamage > 0)
+                        entity.Resources.UltimateCharge += config.UltChargePerAttack * targets.Count;
+
+                    entity.Resources.Clamp(entity.Stats);
                 }
 
+                _state = DetermineBattleState();
                 _current = (_current + 1) % combatants.Count;
                 await UniTask.Yield();
             }
@@ -65,6 +86,18 @@ namespace _Core._Combat.Services
                 default:
                     return new[] { source };
             }
+        }
+
+        private BattleState DetermineBattleState()
+        {
+            bool playerAlive = combatants.Any(c => c.IsPlayer && c.Resources.Health > 0);
+            bool enemiesAlive = combatants.Any(c => !c.IsPlayer && c.Resources.Health > 0);
+
+            if (!playerAlive)
+                return BattleState.Defeat;
+            if (!enemiesAlive)
+                return BattleState.Victory;
+            return BattleState.PlayerTurn;
         }
     }
 }

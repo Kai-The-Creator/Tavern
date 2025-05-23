@@ -21,6 +21,7 @@ namespace _Core._Combat
         [SerializeField] private StatBlock stats = new StatBlock();
         [SerializeField] private ResourcePool resources = new ResourcePool();
         [SerializeField] private PassiveAbilitySO[] passives;
+        private StatusController _statusController;
 
         public string Id => id;
         public bool IsPlayer => isPlayer;
@@ -34,6 +35,7 @@ namespace _Core._Combat
             resources.Health = stats.MaxHealth;
             resources.Mana = stats.MaxMana;
             resources.Stamina = stats.MaxStamina;
+            _statusController = GetComponent<StatusController>();
         }
 
         public virtual UniTask OnTurnStart(BattleConfig config)
@@ -41,6 +43,8 @@ namespace _Core._Combat
             resources.Mana += Mathf.FloorToInt(stats.MaxMana * config.GetManaRegenPercent(IsPlayer));
             resources.Stamina += Mathf.FloorToInt(stats.MaxStamina * config.GetStaminaRegenPercent(IsPlayer));
             resources.Clamp(stats);
+
+            _statusController?.TickStartTurn(this);
 
             if (passives != null)
             {
