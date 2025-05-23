@@ -1,36 +1,39 @@
 using System.Collections.Generic;
 using UnityEngine;
+using _Core._Combat.UI;
 
 namespace _Core._Combat
 {
     /// <summary>
-    /// Displays active status icons. This is a simple placeholder implementation.
+    /// Spawns status icons for active effects.
     /// </summary>
     public class StatusIndicator : MonoBehaviour
     {
-        [SerializeField] private GameObject poisonIcon;
-        [SerializeField] private GameObject regenIcon;
-        [SerializeField] private GameObject stunIcon;
-        [SerializeField] private GameObject shieldIcon;
+        [SerializeField] private Transform container;
+        [SerializeField] private StatusIcon iconPrefab;
 
-        private readonly Dictionary<StatusType, GameObject> _icons = new();
+        private readonly Dictionary<StatusType, StatusIcon> _icons = new();
 
-        private void Awake()
+        public void AddStatus(StatusEffectSO effect)
         {
-            if (poisonIcon) poisonIcon.SetActive(false);
-            if (regenIcon) regenIcon.SetActive(false);
-            if (stunIcon) stunIcon.SetActive(false);
-            if (shieldIcon) shieldIcon.SetActive(false);
-            _icons[StatusType.Poison] = poisonIcon;
-            _icons[StatusType.Regen] = regenIcon;
-            _icons[StatusType.Stun] = stunIcon;
-            _icons[StatusType.Shield] = shieldIcon;
+            if (effect == null || _icons.ContainsKey(effect.Type))
+                return;
+            if (iconPrefab == null || container == null)
+                return;
+
+            var icon = Instantiate(iconPrefab, container);
+            icon.SetIcon(effect.Icon);
+            _icons[effect.Type] = icon;
         }
 
-        public void SetStatus(StatusType type, bool active)
+        public void RemoveStatus(StatusType type)
         {
-            if (_icons.TryGetValue(type, out var go) && go != null)
-                go.SetActive(active);
+            if (_icons.TryGetValue(type, out var icon))
+            {
+                if (icon)
+                    Destroy(icon.gameObject);
+                _icons.Remove(type);
+            }
         }
     }
 }

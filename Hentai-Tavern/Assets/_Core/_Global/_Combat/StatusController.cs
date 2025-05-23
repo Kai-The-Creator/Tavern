@@ -52,7 +52,7 @@ namespace _Core._Combat
             {
                 SkipNextTurn = true;
             }
-            _indicator?.SetStatus(effect.Type, true);
+            _indicator?.AddStatus(effect);
         }
 
         public void TickStartTurn(CombatEntity entity)
@@ -79,7 +79,7 @@ namespace _Core._Combat
                 if (s.Remaining <= 0 || (s.Effect.Type == StatusType.Shield && s.ShieldLeft <= 0))
                 {
                     _statuses.RemoveAt(i);
-                    _indicator?.SetStatus(s.Effect.Type, false);
+                    _indicator?.RemoveStatus(s.Effect.Type);
                 }
             }
             entity.Resources.Clamp(entity.Stats);
@@ -102,7 +102,8 @@ namespace _Core._Combat
                 if (_statuses[i].Effect.Type == type)
                     _statuses.RemoveAt(i);
             }
-            _indicator?.SetStatus(type, _statuses.Any(s => s.Effect.Type == type));
+            if (!_statuses.Any(s => s.Effect.Type == type))
+                _indicator?.RemoveStatus(type);
         }
     }
 }
