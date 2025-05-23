@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: befa09e64f1c4ef98530398173010b65, type: 3}
   m_Name: AreaAttack
   m_EditorClassIdentifier: 
-  Icon: {fileID: 0}
-  PhysicalDamage: 5
-  MagicalDamage: 5
+  Icon: {fileID: -7912231545737405546, guid: 2e89137d1e2dbf84fa3d0b5da5bb1bd6, type: 3}
+  PhysicalDamage: 25
+  MagicalDamage: 25
   CostMana: 0
   CostStamina: 0
   Cooldown: 0
-  MaxTargets: 1
+  MaxTargets: 100
   Effects: []
   Target: 2

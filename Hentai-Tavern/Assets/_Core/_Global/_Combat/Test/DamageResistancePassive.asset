@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8809c3c0534cc58845516406b9b5fd, type: 3}
   m_Name: DamageResistancePassive
   m_EditorClassIdentifier: 
+  Icon: {fileID: 21300000, guid: d851e85a03d280c4a9dd3954847992be, type: 3}
   PhysicalResist: 0.1
   MagicalResist: 0.1

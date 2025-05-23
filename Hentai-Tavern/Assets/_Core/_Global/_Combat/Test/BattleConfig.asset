@@ -16,6 +16,6 @@ MonoBehaviour:
   StaminaRegenPercentPlayer: 0.1
   ManaRegenPercentEnemy: 0.1
   StaminaRegenPercentEnemy: 0.1
-  UltChargePerAttack: 5
+  UltChargePerAttack: 16.2
   UltimateAbility: {fileID: 11400000, guid: e157fa8251051f6469e08fb4567fee6e, type: 2}
-  PotionsPerTurn: 1
+  PotionsPerTurn: 3

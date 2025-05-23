@@ -19,7 +19,11 @@ MonoBehaviour:
   CostStamina: 0
   Cooldown: 0
   MaxTargets: 1
-  Effects: []
+  Effects:
+  - PhysicalDamage: 5
+    MagicalDamage: 5
+    AppliedStatuses:
+    - {fileID: 11400000, guid: b4cfb8e94d470ea458acd3ea23177da2, type: 2}
   Target: 0
   Config: {fileID: 11400000, guid: f38c4100279a9eb42862e32315ac9c34, type: 2}
   HealAmount: 10
